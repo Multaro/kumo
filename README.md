@@ -7,9 +7,16 @@ Um projeto de Desenvolvimento de Jogos, onde foram sorteados temas, no qual o pr
 * **Comidas**
 
 ## **Informações**
+Programação em Lua
+
+## **Tasks Pendentes**
+- [ ]
+- [ ] 
+- [ ] 
+- [ ] 
 
 
-## **Tasks**
+## **Tasks Concluidas**
 - [ ]
 - [ ] 
 - [ ] 
