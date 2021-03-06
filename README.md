@@ -12,12 +12,12 @@ Programação em Lua
 ## **Tasks Pendentes**
 - [ ]
 - [ ] 
-- [ ] 
+- [b] 
 - [ ] 
 
 
 ## **Tasks Concluidas**
-- [ ]
+- [a]
 - [ ] 
 - [ ] 
 - [ ] 
