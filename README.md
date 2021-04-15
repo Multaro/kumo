@@ -1,35 +1,10 @@
 # **Kumo**
 
-
-### **1. Introdução**
-Kumo é um jogo roguelike / hack ’n’ slash / com visão isométrica e morte permanente, onde o jogador coleta comida, matando criaturas ou saqueando templos e castelos, para obter pontos e, quando obter a quantidade necessária, enfrentar um boss, que habita em um microondas, para validar esses pontos. Os pontos definem o score do jogador e, à medida que aumenta, seus adversários ganham mais força e melhorias, antes bloqueadas ou inacessíveis, podem ser adquiridas.
-
-<<<<<<< HEAD
-As batalhas são enfrentadas em tempo real, exigindo a habilidade, estratégia  e agilidade aguçadas do jogador.
-=======
-## **Informações**
-Programação em Lua
-
-## **Tasks Pendentes**
-- [ ]
-- [ ] 
-- [ ] 
-- [ ] 
->>>>>>> 88b61db4e59e2dd0351a74f1512948756ad24070
-
 ### **2. Contexto**
 Seres extraterrestres, predestinados a dominar povos, caíram no mundo de Lumbis e trouxeram consigo objetos desconhecidos e malignos, distorcendo a percepção natural do planeta. Todas as criaturas que habitavam em Lumbis, de presas à predadores, tornaram-se hostis devido a influência extraterrestre, perdidas na escuridão, os afortunados passaram a venerar os novos seres divinos e seus objetos sagrados, originando uma série de ritos, dentre eles, tributos e cruéis sacrifícios. 
 
-<<<<<<< HEAD
 Apenas um lobo-dourado, conhecido como Kumo e aclamado como um herói pela comunidade, não caiu na tentação. Portanto, prometeu a todos e a si mesmo, salvar o mundo e torná-lo no que um dia já foi. Os inimigos são numerosos e com características diversas, pois seus compatriotas agora trabalham para os seres extraterrestres. Quanto maior o nível do jogador, maior a onda de inimigos. Mas há uma esperança para o herói solitário: sua confiança.
 O boss é caracterizado por um monstro com aspectos físicos de uma comida exótica que vive dentro de um microondas desligado.
-=======
-## **Tasks Concluidas**
-- [ ]
-- [ ] 
-- [ ] 
-- [ ] 
->>>>>>> 88b61db4e59e2dd0351a74f1512948756ad24070
 
 ### **3. Objetos essenciais do jogo**
 *  Personagens.
