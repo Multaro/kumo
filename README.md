@@ -1,6 +1,5 @@
 # **Kumo**
 
-
 ### **1. Introdução**
 Kumo é um jogo roguelike / hack ’n’ slash / com visão isométrica e morte permanente, onde o jogador coleta comida, matando criaturas ou saqueando templos e castelos, para obter pontos e, quando obter a quantidade necessária, enfrentar um boss, que habita em um microondas, para validar esses pontos. Os pontos definem o score do jogador e, à medida que aumenta, seus adversários ganham mais força e melhorias, antes bloqueadas ou inacessíveis, podem ser adquiridas.
 
