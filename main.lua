@@ -3,6 +3,7 @@ mapa = {}
 quadros = {}
 
 function love.load()
+  jogador.img = love.graphics.newImage("insumos/jogador.png");
   musicaFundo = love.audio.newSource("musics/fundo.ogg", "stream")
   
   musicaFundo:setLooping(true)
@@ -10,7 +11,7 @@ function love.load()
 end
 
 function love.draw()
-  
+
 end
 
 function love.update(dt)
