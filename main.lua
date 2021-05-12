@@ -1,17 +1,26 @@
+-- Dados do jogador
 jogador = {}
+
 mapa = {}
 quadros = {}
 
 function love.load()
-  jogador.img = love.graphics.newImage("insumos/jogador.png");
-  musicaFundo = love.audio.newSource("musics/fundo.ogg", "stream")
+  -- Carregando dados sobre o jogador
+  jogador.img = love.graphics.newImage("insumos/jogador.png")
+  jogador.x = (love.graphics.getWidth() - jogador.img:getWidth()) / 2
+  jogador.y = (love.graphics.getHeight() - jogador.img:getHeight()) / 2
+  jogador.estaVivo = true
+  
+  musicaFundo = love.audio.newSource("songs/fundo.ogg", "stream")
   
   musicaFundo:setLooping(true)
   musicaFundo:play()
 end
 
 function love.draw()
-
+  if jogador.estaVivo then
+    love.graphics.draw(jogador.img, jogador.x, jogador.y)
+  end
 end
 
 function love.update(dt)
