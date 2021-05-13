@@ -4,11 +4,14 @@ local newQuad = love.graphics.newQuad
 -- Dados do jogador
 local jogador = {}
 local quadrosJogador = {}
+local ataqueInicialJogador = 30
+local velocidadeInicialJogador = 100
+-- Controle e direção do jogador
 local direcaoJogador = 'right'
 local passoJogador = 1
 local passoMaximo = 9
-local ataqueInicialJogador = 30
-local velocidadeInicialJogador = 20
+local status = true
+local tempo = 0.1
 
 -- Variáveis para personalizar dimensões do ladrilho do jogador
 local quantidadeSpritesJogador = 9
@@ -55,17 +58,39 @@ end
 function love.draw()
   if jogador.estaVivo then
     local imgJogadorDirecaoCorreta = definirImagemDirecaoJogador()
-    love.graphics.draw(imgJogadorDirecaoCorreta, jogador.x, jogador.y)
+    love.graphics.draw(imgJogadorDirecaoCorreta, quadrosJogador[direcaoJogador][passoJogador], jogador.x, jogador.y)
   end
 end
 
 function love.update(dt)
-  
+  if jogador.estaVivo then
+    if status == false then
+      tempo = tempo + dt
+      if tempo > 0.2 then
+        tempo = 0.1
+        passoJogador = passoJogador + 1
+        if love.keyboard.isDown('right') then
+          jogador.x = jogador.x + jogador.velocidade
+        elseif love.keyboard.isDown('left') then
+          jogador.x = jogador.x - jogador.velocidade
+        elseif love.keyboard.isDown('up') then
+          jogador.y = jogador.y - jogador.velocidade
+        elseif love.keyboard.isDown('down') then
+          jogador.y = jogador.y + jogador.velocidade
+        end
+        
+        if passoJogador > passoMaximo then
+          passoJogador = 1
+        end
+      end
+    end
+  end
 end
 
 function love.keypressed(keyPressed)
   if quadrosJogador[keyPressed] then
     direcaoJogador = keyPressed
+    status = false
   end
   
   if keyPressed == "kp-" or keyPressed == "kp+" then
@@ -77,6 +102,13 @@ function love.keypressed(keyPressed)
     end
     
     musicaFundo:setVolume(volumeAtual)
+  end
+end
+
+function love.keyreleased(keyReleased)
+  if quadrosJogador[keyReleased] then
+    status = true
+    passo = 1
   end
 end
 
