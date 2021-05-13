@@ -1,16 +1,51 @@
+-- Apelidos para as funções
+local newQuad = love.graphics.newQuad
+
 -- Dados do jogador
-jogador = {}
+local jogador = {}
+local quadrosJogador = {}
+local direcaoJogador = 'right'
+local passoJogador = 1
+local passoMaximo = 9
+local ataqueInicialJogador = 30
+local velocidadeInicialJogador = 20
+
+-- Variáveis para personalizar dimensões do ladrilho do jogador
+local quantidadeSpritesJogador = 9
+local quadLargura = 32
+local quadAltura = 32
+local spriteLargura = 256
+local spriteAltura = 32
 
 mapa = {}
 quadros = {}
 
 function love.load()
   -- Carregando dados sobre o jogador
-  jogador.img = love.graphics.newImage("insumos/jogador.png")
-  jogador.x = (love.graphics.getWidth() - jogador.img:getWidth()) / 2
-  jogador.y = (love.graphics.getHeight() - jogador.img:getHeight()) / 2
+  jogador.imgdireita = love.graphics.newImage("insumos/jogador-dir.png")
+  jogador.imgesquerda = love.graphics.newImage("insumos/jogador-esq.png")
+  jogador.imgcima = love.graphics.newImage("insumos/jogador-cima.png")
+  jogador.imgbaixo = love.graphics.newImage("insumos/jogador-baixo.png")
+  jogador.x = (love.graphics.getWidth() - jogador.imgdireita:getWidth()) / 2
+  jogador.y = (love.graphics.getHeight() - jogador.imgdireita:getHeight()) / 2
   jogador.estaVivo = true
+  jogador.ataque = ataqueInicialJogador
+  jogador.velocidade = velocidadeInicialJogador
   
+  -- Definindo os quadros do sprite para o jogador
+  quadrosJogador['right'] = {}
+  quadrosJogador['left'] = {}
+  quadrosJogador['up'] = {}
+  quadrosJogador['down'] = {}
+  
+  for c = 1, quantidadeSpritesJogador do
+    quadrosJogador['right'][c] = newQuad((c - 1) * quadLargura, 0, quadLargura, quadAltura, spriteLargura, spriteAltura)
+    quadrosJogador['left'][c] = newQuad((c - 1) * quadLargura, 0, quadLargura, quadAltura, spriteLargura, spriteAltura)
+    quadrosJogador['up'][c] = newQuad((c - 1) * quadLargura, 0, quadLargura, quadAltura, spriteLargura, spriteAltura)
+    quadrosJogador['down'][c] = newQuad((c - 1) * quadLargura, 0, quadLargura, quadAltura, spriteLargura, spriteAltura)
+  end
+  
+  -- Definindo as músicas e efeitos sonoros tocados no jogo
   musicaFundo = love.audio.newSource("songs/fundo.ogg", "stream")
   
   musicaFundo:setLooping(true)
@@ -19,7 +54,8 @@ end
 
 function love.draw()
   if jogador.estaVivo then
-    love.graphics.draw(jogador.img, jogador.x, jogador.y)
+    local imgJogadorDirecaoCorreta = definirImagemDirecaoJogador()
+    love.graphics.draw(imgJogadorDirecaoCorreta, jogador.x, jogador.y)
   end
 end
 
@@ -28,6 +64,10 @@ function love.update(dt)
 end
 
 function love.keypressed(keyPressed)
+  if quadrosJogador[keyPressed] then
+    direcaoJogador = keyPressed
+  end
+  
   if keyPressed == "kp-" or keyPressed == "kp+" then
     volumeAtual = musicaFundo:getVolume()
     if keyPressed == "kp-" then
@@ -37,5 +77,17 @@ function love.keypressed(keyPressed)
     end
     
     musicaFundo:setVolume(volumeAtual)
+  end
+end
+
+function definirImagemDirecaoJogador()
+  if direcaoJogador == 'right' then
+    return jogador.imgdireita
+  elseif direcaoJogador == 'left' then
+    return jogador.imgesquerda
+  elseif direcaoJogador == 'up' then
+    return jogador.imgcima
+  elseif direcaoJogador == 'down' then
+    return jogador.imgbaixo
   end
 end
