@@ -3,8 +3,11 @@ mapa = {}
 quadros = {}
 
 function love.load()
-  musicaFundo = love.audio.newSource("musics/fundo.ogg", "stream")
+  musicaFundo = love.audio.newSource("songs/fundo.ogg", "stream")
+  efeitoJogadorAtingido = love.audio.newSource("songs/jogadorAtingido.mp3", "static")
+  efeitoPegandoItem = love.audio.newSource("songs/pegandoItem.mp3", "static")
   
+  -- Configurando as músicas e efeitos sonoros
   musicaFundo:setLooping(true)
   musicaFundo:play()
 end
