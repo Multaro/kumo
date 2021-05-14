@@ -50,7 +50,10 @@ function love.load()
   
   -- Definindo as músicas e efeitos sonoros tocados no jogo
   musicaFundo = love.audio.newSource("songs/fundo.ogg", "stream")
+  efeitoJogadorAtingido = love.audio.newSource("songs/jogadorAtingido.mp3", "static")
+  efeitoPegandoItem = love.audio.newSource("songs/pegandoItem.mp3", "static")
   
+  -- Configurando as músicas e efeitos sonoros
   musicaFundo:setLooping(true)
   musicaFundo:play()
 end
