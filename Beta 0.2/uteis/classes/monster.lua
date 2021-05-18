@@ -1,10 +1,10 @@
 local lifeMob = require("uteis.classes.lifeMob")
 local id = 0
-local sleepTime = 0
+
 local monster = {}
+local Q = love.graphics.newQuad
 
-
-function monster.createMonster(mob,nome,img,posX,posY,atq,vida)
+function monster.createMonster(mob,nome,img,qtdQuadrosX,qtdQuadrosY,quadro,posX,posY,atq,vida)
 --monster.createMonster(mob da tabela, nome do monstro, caminho da imagem, posição x, posição Y, dano do monstro, vida do monstro)    
     id = id+1
     mob.item = {}
@@ -16,8 +16,44 @@ function monster.createMonster(mob,nome,img,posX,posY,atq,vida)
     mob.posX = posX
     mob.posY = posY
     mob.life = {}
+    mob.sleepTime = 0
+    mob.sleepTimePos = 0
+    mob.pos = 1
+    mob.img:setFilter("nearest","linear")
+    mob.quadro = quadro -- tamanho quadro em px
+    mob.qtdQuadrosX = qtdQuadrosX 
+    mob.qtdQuadrosY = qtdQuadrosY
+    if(mob.qtdQuadrosX == 0) then
+      mob.qtdQuadrosX = 1
+    end
+    if(mob.qtdQuadrosY == 0) then
+      mob.qtdQuadrosX = 1
+    end
+    mob.Quadros = {}
+    mob.direcao = 'down'
+    mob.Quadros['up'] = {}
+    mob.Quadros['down']= {}
+    mob.Quadros['left'] = {}
+    mob.Quadros['right'] = {}
+    mob.qtdQuadros = mob.qtdQuadrosX * mob.qtdQuadrosY
     lifeMob.createLife(mob.life,posX,posY,vida,mob.img:getWidth())
     monster.setVisao(mob)
+
+
+
+        local y = 0
+
+          for x = 0, (mob.qtdQuadrosY - 1) do 
+           quadroPosX = x * mob.quadro
+           mob.Quadros['down'][x+1] = Q((quadroPosX), (0 * mob.quadro),mob.quadro,mob.quadro,mob.img:getWidth(),mob.img:getHeight())
+           mob.Quadros['left'][x+1] = Q((quadroPosX), (1 * mob.quadro),mob.quadro,mob.quadro,mob.img:getWidth(),mob.img:getHeight())
+           mob.Quadros['right'][x+1] = Q((quadroPosX), (2 * mob.quadro),mob.quadro,mob.quadro,mob.img:getWidth(),mob.img:getHeight())
+           mob.Quadros['up'][x+1] = Q((quadroPosX), (3 * mob.quadro),mob.quadro,mob.quadro,mob.img:getWidth(),mob.img:getHeight())
+
+          end
+  
+
+
     return mob
   end
 
@@ -26,17 +62,23 @@ function monster.createMonster(mob,nome,img,posX,posY,atq,vida)
 
 
   
-  function monster.draw(mob,fonte)
+  function monster.draw(mob,fonte,dt)
   -- monster.draw(mob da tabela,fonte para o nome do monstro)  
-    nomeSizeX = fonte:getWidth(mob.nome) - mob.img:getWidth()
+    nomeSizeX = fonte:getWidth(mob.nome) - mob.quadro
     nomeSizeX = mob.posX - (nomeSizeX / 2)
     lifeMob.draw(mob.life)
     love.graphics.setColor(2/255,218/255,125/255,1)
     nomePosY = lifeMob.getPosY(mob.life) - fonte:getHeight(mob.nome)
     love.graphics.print(mob.nome,nomeSizeX,nomePosY)
-    lifeMob.updatePos(mob.life,mob.posX,mob.posY,mob.img:getWidth())
+    lifeMob.updatePos(mob.life,mob.posX,mob.posY,mob.quadro)
     love.graphics.setColor(1,1,1,1)
-    love.graphics.draw(mob.img, mob.posX, mob.posY)
+  
+  
+                love.graphics.draw(mob.img,mob.Quadros[mob.direcao][mob.pos],mob.posX,(mob.posY))
+
+
+
+  
 
   end
 
@@ -80,8 +122,13 @@ function monster.createMonster(mob,nome,img,posX,posY,atq,vida)
   end
 
   function monster.setVisao(mob)
-    mob.tamVisaoX = img:getWidth() * 5
-    mob.tamVisaoY = img:getHeight() * 5
+    mob.tamVisaoX = mob.quadro * 5
+    mob.tamVisaoY = mob.quadro * 5
+    if(mob.tamVisaoX < 200) then
+      mob.tamVisaoX = 200
+      mob.tamVisaoY = 200
+    end
+
     mob.visaoPosX = mob.posX - (mob.tamVisaoX / 2)
     mob.visaoPosY = mob.posY - (mob.tamVisaoY / 2)
   end
@@ -98,7 +145,7 @@ function monster.createMonster(mob,nome,img,posX,posY,atq,vida)
 
   function monster.colisaoMob(mob,playerX,playerY,playerWidth,playerHeight,dt)
 -- mob da tabela, posição X do player, posição Y do player, largura, altura, velocidade, dt (update))    
-    if(mob.posX < (playerX + playerWidth) and ((mob.posX + mob.img:getWidth()) > playerX) and (mob.posY < (playerY + playerHeight)) and ((mob.posY + mob.img:getHeight()) > playerY)) then
+    if(mob.posX < (playerX + playerWidth) and ((mob.posX + mob.quadro) > playerX) and (mob.posY < (playerY + playerHeight)) and ((mob.posY + mob.quadro) > playerY)) then
        
         return true
     else
@@ -111,45 +158,119 @@ function monster.createMonster(mob,nome,img,posX,posY,atq,vida)
 -- mob da tabela, posição X do player, posição Y do player, largura, altura, velocidade, dt (update))
     if((monster.visaoMob(mob,playerX,playerY,playerWidth,playerHeight) == true)and(monster.colisaoMob(mob,playerX,playerY,playerWidth,playerHeight,dt) == false)) then
           if(mob.posX > playerX) then
-            mob.posX = mob.posX - medidaMoviemento * dt
+            if(mob.direcao == 'left') then
+              mob.pos = mob.pos + 1
+              mob.posX = mob.posX - medidaMoviemento * dt
+            else
+              mob.pos = 1
+              mob.direcao = 'left'
+              mob.posX = mob.posX - medidaMoviemento * dt
+            end
+           
           elseif(mob.posX < playerX) then
-            mob.posX = mob.posX + medidaMoviemento * dt
+            if(mob.direcao == 'right') then
+              mob.pos = mob.pos + 1
+              mob.posX = mob.posX + medidaMoviemento * dt
+            else
+              mob.pos = 1
+              mob.direcao = 'right'  
+              mob.posX = mob.posX + medidaMoviemento * dt
+            end
+            
+            
           end
           if(mob.posY > playerY) then
-            mob.posY = mob.posY - medidaMoviemento * dt
+            if(mob.direcao == 'up') then
+              mob.pos = mob.pos + 1
+              mob.posY = mob.posY - medidaMoviemento * dt
+            else
+              mob.pos = 1
+              mob.direcao = 'up'
+              mob.posY = mob.posY - medidaMoviemento * dt
+            end   
+            
           elseif(mob.posY < playerY) then
-            mob.posY = mob.posY + medidaMoviemento * dt
+            if(mob.direcao == 'down') then
+              mob.pos = mob.pos + 1
+              mob.posY = mob.posY + medidaMoviemento * dt
+            else
+              mob.pos = 1
+              mob.direcao = 'down'
+              mob.posY = mob.posY + medidaMoviemento * dt
+            end
+            
           end
     elseif(monster.colisaoMob(mob,playerX,playerY,playerWidth,playerHeight,dt) == false) then
-     sleepTime = sleepTime + dt
-      if(sleepTime > 1) then
- 
+      mob.sleepTime = mob.sleepTime + dt
+      if(mob.sleepTime > 1) then
         randomNumber = love.math.random(1, 4)
-          if(randomNumber == 1 and monster.colisaoBorda(mob.posX,mob.posY,mob.img:getWidth(),mob.img:getHeight(),"left")) then
-                  mob.posX = mob.posX - (medidaMoviemento * 10)* dt
+          if(randomNumber == 1 and monster.colisaoBorda(mob.posX,mob.posY,mob.quadro,mob.quadro,"left")) then
+            if(mob.direcao == 'left') then
+              mob.pos = mob.pos + 1
+              mob.posX = mob.posX - (medidaMoviemento * 10)* dt
+            else
+              mob.pos = 1
+              mob.direcao = 'left'
+              mob.posX = mob.posX - (medidaMoviemento * 10)* dt
+            end
 
                 end
                 
-          if(randomNumber == 2 and monster.colisaoBorda(mob.posX,mob.posY,mob.img:getWidth(),mob.img:getHeight(),"right")) then
+          if(randomNumber == 2 and monster.colisaoBorda(mob.posX,mob.posY,mob.quadro,mob.quadro,"right")) then
+                if(mob.direcao == 'right') then
+                  mob.pos = mob.pos + 1
                   mob.posX = mob.posX + (medidaMoviemento * 10) * dt
+                else
+                  mob.pos = 1
+                  mob.direcao = 'right'  
+                  mob.posX = mob.posX + (medidaMoviemento * 10) * dt
+                end
+                
+               
 
                 end
                 
-          if(randomNumber == 3 and monster.colisaoBorda(mob.posX,mob.posY,mob.img:getWidth(),mob.img:getHeight(),"up")) then
-                  mob.posY = mob.posY - (medidaMoviemento * 10) * dt
+          if(randomNumber == 3 and monster.colisaoBorda(mob.posX,mob.posY,mob.quadro,mob.quadro,"up")) then
+            if(mob.direcao == 'up') then
+              mob.pos = mob.pos + 1
+              mob.posY = mob.posY - (medidaMoviemento * 10) * dt
+            else
+              mob.pos = 1
+              mob.direcao = 'up'
+              mob.posY = mob.posY - (medidaMoviemento * 10) * dt
+            end   
         
                 end
                 
-          if(randomNumber == 4 and monster.colisaoBorda(mob.posX,mob.posY,mob.img:getWidth(),mob.img:getHeight(),"down")) then
-                  mob.posY = mob.posY + (medidaMoviemento * 10) * dt
+          if(randomNumber == 4 and monster.colisaoBorda(mob.posX,mob.posY,mob.quadro,mob.quadro,"down")) then
+            if(mob.direcao == 'down') then
+              mob.pos = mob.pos + 1
+              mob.posY = mob.posY + (medidaMoviemento * 10) * dt
+            else
+              mob.pos = 1
+              mob.direcao = 'down'
+              mob.posY = mob.posY + (medidaMoviemento * 10) * dt
+            end
+            
+            
                   
                 end
-                sleepTime = 0
+              mob.sleepTime = 0
           end
-          lifeMob.updatePos(mob.life,mob.posX,mob.posY,mob.img:getWidth())
+        end
+          lifeMob.updatePos(mob.life,mob.posX,mob.posY,mob.quadro)
           monster.setVisao(mob)
-           
+      if(mob.pos == mob.qtdQuadrosX) then
+        mob.pos = 1
       end
+        mob.sleepTimePos = mob.sleepTimePos + dt
+          if(mob.sleepTimePos > 1) then
+            mob.sleepTimePos = 0
+            mob.pos = mob.pos + 1
+          end
+ 
+                
+
       return false
       
   end
@@ -181,7 +302,7 @@ function monster.dano(mob,valor)
   function monster.ataque(mob,posX,posY,width,height) 
   -- verifica se o monstro pode ou não atacar
   -- monstro da tabela, posição X, posição Y, largura, altura
-    if((mob.posX < posX + width) and (mob.posX + mob.img:getWidth() > posX) and (mob.posY < posY + height) and (mob.posY + mob.img:getHeight() > posY)) then
+    if((mob.posX < posX + width) and (mob.posX + mob.quadro > posX) and (mob.posY < posY + height) and (mob.posY + mob.quadro > posY)) then
         return true
       else 
         return false

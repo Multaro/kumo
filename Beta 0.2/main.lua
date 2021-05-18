@@ -10,7 +10,7 @@ local monstros = {} -- Tabela que vai armazenar os monstros
 local drops = {} -- Tabela que ira armazenar os itens 
 local addvida = 10 
 local fonte
-
+local delta
 function love.load()
  fonte = love.graphics.newFont('uteis/fonts/joystix/joystix.ttf',10)
  love.graphics.setFont(fonte)
@@ -22,28 +22,29 @@ function love.load()
   player.pontos = 0
  
  local mob = {}
- table.insert(monstros, monster.createMonster(mob,'Slime','uteis/imgs/face.png',500,100,10,100)) 
+ table.insert(monstros, monster.createMonster(mob,'Slime','uteis/imgs/Slimey.png',4,4,16,500,100,10,100)) 
 end
 function love.draw()
 
 lifePersonagem.lifePersonagemDraw()
  for i, mobs in ipairs(monstros) do
-    monster.draw(mobs,fonte) 
+    monster.draw(mobs,fonte,delta) 
   end
   
   
   for i, itensDropados in ipairs(drops) do
-      item.Draw(itensDropados,1) 
+      item.Draw(itensDropados,1,delta) 
   end
 
   
 love.graphics.setColor(0,0,1,1)
 love.graphics.rectangle('fill',player.posx,player.posy,player.width,player.height)
-love.graphics.print(player.pontos,10,10)
+love.graphics.print("Pontos:" .. player.pontos,10,10)
 
 end
 
 function love.update(dt)
+  delta = dt
 
   -- Movimenta os Monstros e controla a visão/ataque dos mesmos
   for i, monst in ipairs(monstros) do
@@ -105,7 +106,7 @@ function love.keyreleased(key)
     if key == 'q' then
       local mob = {}
       
-      table.insert(monstros, monster.createMonster(mob,'Slime','uteis/imgs/face.png',500,100,10,100+addvida))
+      table.insert(monstros, monster.createMonster(mob,'Slime','uteis/imgs/Slimey.png',4,4,16,500,100,10,100+addvida))
       addvida = addvida + 10
     end
     

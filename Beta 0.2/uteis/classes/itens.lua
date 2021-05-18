@@ -1,14 +1,16 @@
 local Q = love.graphics.newQuad
 local K = love.keyboard.isDown
-local item = {}
-local sleepTime = 0 -- Timer 
-local pos = 1
+local item = {} -- Timer 
+local id = 0
 math.randomseed(os.time())
 
 function item.criaItem(i,qdImagem,qtdQuadrosX,qtdQuadrosY,quadro,posX,posY,utilidade)
  -- cria o item 
  --item da tabela, imagem(quad ou não), quantidade de quadros no eixo x,
  -- quantidade de quadros no eixo y, tamanho do quadro, posição x, posição y, utilidade('moeda' para pontos, 'comida' para curar) 
+    i.pos = 1
+    i.sleepTime = 0
+    i.id = id
     i.posX = posX
     i.posY = posY - 20
     i.qdImagem = love.graphics.newImage(qdImagem)
@@ -16,7 +18,7 @@ function item.criaItem(i,qdImagem,qtdQuadrosX,qtdQuadrosY,quadro,posX,posY,utili
     i.quadro = quadro -- tamanho quadro em px
     i.qtdQuadrosX = qtdQuadrosX -- quantidade de quadros na posição x
     i.qtdQuadrosY = qtdQuadrosY-- quantidade de quadros na posição y
-     
+    id = id + 1
     if(i.qtdQuadrosX == 0) then
         i.qtdQuadrosX = 1
     end
@@ -45,7 +47,7 @@ function item.criaItem(i,qdImagem,qtdQuadrosX,qtdQuadrosY,quadro,posX,posY,utili
       return i
 end
 
-function item.Draw(i,qtdItens)
+function item.Draw(i,qtdItens,dt)
     --item.Draw(item da tabela, quantidade)
     love.graphics.setColor(1,1,1,1)
     for x = 0, (qtdItens - 1) do
@@ -53,11 +55,18 @@ function item.Draw(i,qtdItens)
             love.graphics.draw(i.qdImagem,i.Quadros[i.itemRandom],i.posX,(i.posY))
         elseif(i.utilidade == 'moeda') then
             for x = 0, i.qtdQuadros do
-                
-                     love.graphics.draw(i.qdImagem,i.Quadros[pos],i.posX,(i.posY))
-                     pos = pos + 1
-                     if(pos == i.qtdQuadros) then
-                        pos = 1
+                i.sleepTime = i.sleepTime + dt
+                if(i.sleepTime > 1) then
+                    
+                    love.graphics.draw(i.qdImagem,i.Quadros[i.pos],i.posX,(i.posY))
+                    i.sleepTime = 0
+                    i.pos = i.pos + 1
+                else
+                    love.graphics.draw(i.qdImagem,i.Quadros[i.pos],i.posX,(i.posY))
+                end
+                     
+                     if(i.pos == i.qtdQuadros) then
+                        i.pos = 1
                     end
             end
         end  
