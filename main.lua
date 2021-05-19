@@ -1,38 +1,52 @@
 
-local lifePersonagem = require("uteis.classes.lifePersonagem")
-local monster = require("uteis.classes.monster")
-local player = {}
+local lifePersonagem = require("uteis.classes.lifePersonagem") -- Import barra de vida do player
+local monster = require("uteis.classes.monster") -- Import dos monstros
+local item = require("uteis.classes.itens") -- Import itens
+local player = {} -- Instancia do Player
 local k = love.keyboard.isDown
-local velocidade = 100
 local sleepTime = 0
-local monstros = {}
-local addvida = 10
-
+local sleepTimeItem = 0-- Timer 
+local monstros = {} -- Tabela que vai armazenar os monstros
+local drops = {} -- Tabela que ira armazenar os itens 
+local addvida = 10 
+local fonte
+local delta
 function love.load()
- love.window.setMode(800,700)
- width, height = love.graphics.getDimensions()
+ fonte = love.graphics.newFont('uteis/fonts/joystix/joystix.ttf',10)
+ love.graphics.setFont(fonte)
  lifePersonagem.lifePersonagemLoad()
  player.posx = 500
  player.posy = 500
  player.width = 50
  player.height = 50
+  player.pontos = 0
+ 
  local mob = {}
- table.insert(monstros, monster.createMonster(mob,'uteis/imgs/face.png',500,100,10,100))
+ table.insert(monstros, monster.createMonster(mob,'Slime','uteis/imgs/Slimey.png',4,4,16,500,100,10,100)) 
 end
 function love.draw()
 
 lifePersonagem.lifePersonagemDraw()
  for i, mobs in ipairs(monstros) do
-    monster.draw(mobs)
+    monster.draw(mobs,fonte,delta) 
   end
+  
+  
+  for i, itensDropados in ipairs(drops) do
+      item.Draw(itensDropados,1,delta) 
+  end
+
   
 love.graphics.setColor(0,0,1,1)
 love.graphics.rectangle('fill',player.posx,player.posy,player.width,player.height)
-
+love.graphics.print("Pontos:" .. player.pontos,10,10)
 
 end
 
 function love.update(dt)
+  delta = dt
+
+  -- Movimenta os Monstros e controla a visão/ataque dos mesmos
   for i, monst in ipairs(monstros) do
     
     monster.movimenta(monst,player.posx,player.posy,player.width,player.height,100,dt)
@@ -44,14 +58,31 @@ function love.update(dt)
         end
         
       end
-    if monster.getVida(monst) == 0  then 
+    if monster.getVida(monst) == 0  then -- Se o monstro for morto, dropa o item
       table.remove(monstros, i)
+      local dropComida = {}
+      local dropMoeda = {}
+      table.insert(drops, item.criaItem(dropComida,"uteis/imgs/comida.png",5,2,32,monster.getPosX(monst),monster.getPosY(monst),'comida'))
+      table.insert(drops, item.criaItem(dropMoeda,"uteis/imgs/spr_coin_strip4.png",4,1,16,monster.getPosX(monst),monster.getPosY(monst) - 10,'moeda'))
     end
   end
+  
+  -- Controla os itens dropados
+      for i, itensDropados in ipairs(drops) do
+        if(item.Coleta(itensDropados,player.posx,player.posy,player.width,player.height)) then
+          if(item.getUtilidade(itensDropados) == 'comida') then
+             lifePersonagem.cura(50)
+          elseif(item.getUtilidade(itensDropados) == 'moeda') then
+              player.pontos = player.pontos + 10
+          end
+        
+            table.remove(drops, i)
+        end
+      end
       
     
   
-  
+  -- Movimento do Player
        if k("down") and monster.colisaoBorda(player.posx,player.posy,player.width,player.height,"down") then
           player.posy = player.posy + 64 * dt
         elseif k("up") and monster.colisaoBorda(player.posx,player.posy,player.width,player.height,"up") then
@@ -75,7 +106,7 @@ function love.keyreleased(key)
     if key == 'q' then
       local mob = {}
       
-      table.insert(monstros, monster.createMonster(mob,'uteis/imgs/face.png',500,100,10,100+addvida))
+      table.insert(monstros, monster.createMonster(mob,'Slime','uteis/imgs/Slimey.png',4,4,16,500,100,10,100+addvida))
       addvida = addvida + 10
     end
     

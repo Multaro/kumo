@@ -11,6 +11,7 @@ function lifePersonagem.lifePersonagemLoad()
   lifePersonagem.fillX = lifePersonagem.x + 10
   lifePersonagem.fillY = (lifePersonagem.y + img:getHeight()/4)/2 -2
   lifePersonagem.value = 195
+  lifePersonagem.maxValue = lifePersonagem.value
 end
 
 --Função responsavel por desenhar a barra de lifePersonagem
@@ -34,10 +35,15 @@ function lifePersonagem.dano(valor)
     valor = ((valor * 100)/195)
     lifePersonagem.value =  lifePersonagem.value - valor
   end
-  
+end
 
-  
-  
+  function lifePersonagem.cura(valor)
+    if(lifePersonagem.value + valor) > lifePersonagem.maxValue then
+        lifePersonagem.value = lifePersonagem.maxValue
+    else
+      valor = ((valor * 100)/195)
+      lifePersonagem.value =  lifePersonagem.value + valor
+    end
 end
 function lifePersonagem.setX(valor)
     

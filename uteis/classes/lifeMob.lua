@@ -1,6 +1,9 @@
 lifeMob = {}
 
+
 function lifeMob.createLife(life,x,y,value,size)
+-- cria a barra de vida do monstro
+-- vida da tabela, posição x, posição y, valor, altura
   life.x = x - value / 2 + size/2
   life.y = y - 25
   life.value = value
@@ -13,7 +16,29 @@ function lifeMob.createLife(life,x,y,value,size)
 end
 
 
+function lifeMob.getPosX(life)
+  return life.offsetBarX
+end
+
+function lifeMob.getPosY(life)
+  return life.offsetBarY
+end
+
+function lifeMob.setHeight(life,valor)
+  life.y = (y - 25) - (life.height - valor)
+  life.height = value
+  life.offsetBarHeight = life.height + 6
+  
+end
+
+function lifeMob.getHeight(life)
+  return life.height
+end
+
+
 function lifeMob.updatePos(life,x,y,size)
+  -- responsavel por atualizar a posição da barra de vida
+  -- vida da tabela, posição x, posição y, valor, altura
   life.x = x - life.vidaMaxima / 2 + size/2
   life.y = y - 25
   life.offsetBarX = life.x - 3
@@ -21,6 +46,8 @@ function lifeMob.updatePos(life,x,y,size)
 end
 
 function lifeMob.dano(life,valor)
+-- calcula a vida que o mob perdeu e atualiza o tamanho da barra de vida
+-- vida da tabela, valor(dano)
    if(life.value - valor) < 0 then
     life.value = 0
   else
