@@ -1,4 +1,4 @@
-img = love.graphics.newImage('uteis/imgs/lifebar.png')
+img = love.graphics.newImage('uteis/imgs/player/lifebar.png')
 local lifePersonagem = {}
 local posDebugx = 500
 local posDebugy = 500

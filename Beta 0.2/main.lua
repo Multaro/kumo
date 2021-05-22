@@ -22,7 +22,7 @@ function love.load()
   player.pontos = 0
  
  local mob = {}
- table.insert(monstros, monster.createMonster(mob,'Slime','uteis/imgs/Slimey.png',4,4,16,500,100,10,100)) 
+ table.insert(monstros, monster.createMonster(mob,'Slime','uteis/imgs/monster/Slimey.png',4,4,16,500,100,10,100)) 
 end
 function love.draw()
 
@@ -62,8 +62,8 @@ function love.update(dt)
       table.remove(monstros, i)
       local dropComida = {}
       local dropMoeda = {}
-      table.insert(drops, item.criaItem(dropComida,"uteis/imgs/comida.png",5,2,32,monster.getPosX(monst),monster.getPosY(monst),'comida'))
-      table.insert(drops, item.criaItem(dropMoeda,"uteis/imgs/spr_coin_strip4.png",4,1,16,monster.getPosX(monst),monster.getPosY(monst) - 10,'moeda'))
+      table.insert(drops, item.criaItem(dropComida,"uteis/imgs/itens/comida.png",5,2,32,monster.getPosX(monst),monster.getPosY(monst),'comida'))
+      table.insert(drops, item.criaItem(dropMoeda,"uteis/imgs/itens/spr_coin_strip4.png",4,1,16,monster.getPosX(monst),monster.getPosY(monst) - 10,'moeda'))
     end
   end
   
@@ -106,7 +106,7 @@ function love.keyreleased(key)
     if key == 'q' then
       local mob = {}
       
-      table.insert(monstros, monster.createMonster(mob,'Slime','uteis/imgs/Slimey.png',4,4,16,500,100,10,100+addvida))
+      table.insert(monstros, monster.createMonster(mob,'Slime','uteis/imgs/monster/Slimey.png',4,4,16,500,100,10,100+addvida))
       addvida = addvida + 10
     end
     
