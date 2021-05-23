@@ -23,12 +23,12 @@ function monster.createMonster(mob,nome,img,qtdQuadrosX,qtdQuadrosY,quadro,posX,
     mob.quadro = quadro -- tamanho quadro em px
     mob.qtdQuadrosX = qtdQuadrosX 
     mob.qtdQuadrosY = qtdQuadrosY
-    if(mob.qtdQuadrosX == 0) then
-      mob.qtdQuadrosX = 1
-    end
-    if(mob.qtdQuadrosY == 0) then
-      mob.qtdQuadrosX = 1
-    end
+      if(mob.qtdQuadrosX == 0) then
+        mob.qtdQuadrosX = 1
+      end
+      if(mob.qtdQuadrosY == 0) then
+        mob.qtdQuadrosX = 1
+      end
     mob.Quadros = {}
     mob.direcao = 'down'
     mob.Quadros['up'] = {}
