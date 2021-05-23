@@ -32,7 +32,7 @@ function love.load()
  player.createPlayer(500,500,'uteis/imgs/player/player.png',128)
 
  local mob = {}
- table.insert(monstros, monster.createMonster(mob,'Rinoceronte','uteis/imgs/monster/rino.png',128,500,100,10,100)) 
+ table.insert(monstros, monster.createMonster(mob,'Rinoceronte','uteis/imgs/monster/rino2.png',128,500,100,10,100)) 
 end
 
 
