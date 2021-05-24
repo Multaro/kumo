@@ -1,195 +1,220 @@
--- Apelidos para as funções
-local newQuad = love.graphics.newQuad
+-- Classes ------------------------------------------------
+local monster = require("uteis.classes.monster") -- Import dos monstros
+local player = require("uteis.classes.player") -- Import player
+local menu = require("uteis.classes.menu") -- Import Menu
+local Boss = require("uteis.classes.Boss") -- Import Boss
+local mapa = require("uteis.classes.mapa") -- Import Mapa
 
--- Dados do jogador
-local jogador = {}
-local quadrosJogador = {}
-local ataqueInicialJogador = 30
-local velocidadeInicialJogador = 100
--- Controle e direção do jogador
-local direcaoJogador = 'right'
-local passoJogador = 1
-local passoMaximo = 9
-local status = true
-local tempo = 0.1
+-- variaveis de controle ------------------------------------------------
+local time = 13
+local k = love.keyboard.isDown
+local sleepTime = 0
+local sleepTimeItem = 0-- Timer 
+local timeMenuController = 0
+local monstros = {} -- Tabela que vai armazenar os monstros
+local fonteWay
+local fonte
+local delta
+local medidaMoviemento = 64
+local podeAtacar = false
+local gameState = 'game'
+local randomPosX
+local randomPosY
 
--- Variáveis para personalizar dimensões do ladrilho do jogador
-local quantidadeSpritesJogador = 9
-local quadLargura = 32
-local quadAltura = 32
-local spriteLargura = 256
-local spriteAltura = 32
-
-local mapa = {}
-local quadrosMapa = {}
-local tamanhoQuadroMapa = 32
-local quantidadeQuadrosMapa = 6
-local primeiraFase = {
--- 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30
-  {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3}, -- 1
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 2
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 3
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 8, 8, 8, 8, 8, 8, 4, 4, 4, 4, 4, 4, 3}, -- 4
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 5
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 6
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 7
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 8
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 9
-  {5, 4, 4, 4, 8, 8, 8, 8, 8, 8, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 10
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 11
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 12
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 13
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 4, 4, 3}, -- 14
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 15
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 16
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 17
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 18
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 19
-  {5, 4, 4, 4, 8, 8, 8, 8, 8, 8, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 20
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 21
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 22
-  {6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 3}, -- 23
-}
-
-local segundaFase = {
-  -- 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30
-  {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3}, -- 1
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 2
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 3
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 4
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 5
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 6
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 7
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 8
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 9
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 10
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 11
-  {5, 4, 4, 4, 4, 4, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 4, 4, 4, 4, 4, 4, 4, 3}, -- 12
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 13
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 14
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 15
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 16
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 17
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 18
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 19
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 20
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 21
-  {5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3}, -- 22
-  {6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 3}, -- 23
-}
-local proximaFase
-
+-- Load ------------------------------------------------
 function love.load()
-  love.graphics.setBackgroundColor(0, 0, 0)
-  love.graphics.setFont(love.graphics.newFont(16))
-  -- Carregando dados sobre o jogador
-  jogador.imgdireita = love.graphics.newImage("insumos/jogador-dir.png")
-  jogador.imgesquerda = love.graphics.newImage("insumos/jogador-esq.png")
-  jogador.imgcima = love.graphics.newImage("insumos/jogador-cima.png")
-  jogador.imgbaixo = love.graphics.newImage("insumos/jogador-baixo.png")
-  jogador.x = (love.graphics.getWidth() - jogador.imgdireita:getWidth()) / 2
-  jogador.y = (love.graphics.getHeight() - jogador.imgdireita:getHeight()) / 2
-  jogador.estaVivo = true
-  jogador.ataque = ataqueInicialJogador
-  jogador.velocidade = velocidadeInicialJogador
-  
-  -- Definindo os quadros do sprite para o jogador
-  quadrosJogador['right'] = {}
-  quadrosJogador['left'] = {}
-  quadrosJogador['up'] = {}
-  quadrosJogador['down'] = {}
-  
-  for c = 1, quantidadeSpritesJogador do
-    quadrosJogador['right'][c] = newQuad((c - 1) * quadLargura, 0, quadLargura, quadAltura, spriteLargura, spriteAltura)
-    quadrosJogador['left'][c] = newQuad((c - 1) * quadLargura, 0, quadLargura, quadAltura, spriteLargura, spriteAltura)
-    quadrosJogador['up'][c] = newQuad((c - 1) * quadLargura, 0, quadLargura, quadAltura, spriteLargura, spriteAltura)
-    quadrosJogador['down'][c] = newQuad((c - 1) * quadLargura, 0, quadLargura, quadAltura, spriteLargura, spriteAltura)
+ fonteWay = 'uteis/fonts/joystix/joystix.ttf'
+ menu.load()
+ fonte = love.graphics.newFont(fonteWay,10)
+ love.graphics.setFont(fonte)
+ 
+ player.createPlayer(500,500,'uteis/imgs/player/player.png',128)
 
-  end
-
-  -- Carregando informações sobre o mapa
-  mapa.img = love.graphics.newImage("insumos/map.png")
-  mapa.fases = {}
-  table.insert(mapa.fases, primeiraFase)
-  table.insert(mapa.fases, segundaFase)
-  
-  quadrosMapa[1] = newQuad(1 * tamanhoQuadroMapa, 1 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.img:getWidth(), mapa.img:getHeight())
-  quadrosMapa[2] = newQuad(2 * tamanhoQuadroMapa, 1 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.img:getWidth(), mapa.img:getHeight())
-  quadrosMapa[3] = newQuad(3 * tamanhoQuadroMapa, 1 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.img:getWidth(), mapa.img:getHeight())
-  quadrosMapa[4] = newQuad(2 * tamanhoQuadroMapa, 2 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.img:getWidth(), mapa.img:getHeight())
-  quadrosMapa[5] = newQuad(1 * tamanhoQuadroMapa, 2 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.img:getWidth(), mapa.img:getHeight())
-  quadrosMapa[6] = newQuad(1 * tamanhoQuadroMapa, 3 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.img:getWidth(), mapa.img:getHeight())
-  quadrosMapa[7] = newQuad(2 * tamanhoQuadroMapa, 3 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.img:getWidth(), mapa.img:getHeight())
-  quadrosMapa[8] = newQuad(1 * tamanhoQuadroMapa, 9 * tamanhoQuadroMapa - 2, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.img:getWidth(), mapa.img:getHeight())
-  
-  proximaFase = 1
-  
-  -- Definindo as músicas e efeitos sonoros tocados no jogo
-  musicaFundo = love.audio.newSource("songs/fundo.ogg", "stream")
-  efeitoJogadorAtingido = love.audio.newSource("songs/jogadorAtingido.mp3", "static")
-  efeitoPegandoItem = love.audio.newSource("songs/pegandoItem.mp3", "static")
-  
-  -- Configurando as músicas e efeitos sonoros
-  musicaFundo:setLooping(true)
-  musicaFundo:play()
+ local mob = {}
+ table.insert(monstros, monster.createMonster(mob,'Rinoceronte','uteis/imgs/monster/rino.png',128,500,100,10,100)) 
+ if(gameState == 'boss') then
+  Boss.createBoss(gameState)
+ end
+ Boss.createBoss(gameState)
+ mapa.criaMapa()
 end
 
-function love.draw()
+-- Draw ------------------------------------------------
+function love.draw()  
+  -- Aqui conteudo do Menu
+  if(gameState == 'intro' or gameState == 'menu') then
+    love.graphics.setColor(0,0,0,1)
+    menu.draw(gameState,time,fonteWay)
+  end
   
-  
-  for posicao, linha in ipairs(mapa.fases[proximaFase]) do
-    for coluna, quadro in ipairs(linha) do
-      if quadro ~= 0 then
-          love.graphics.draw(mapa.img, quadrosMapa[quadro], (coluna - 1) * tamanhoQuadroMapa, (posicao - 1) * tamanhoQuadroMapa)
-      end
+  -- Aqui conteudo do Jogo
+if(gameState == "game" or gameState == 'boss') then
+  if(gameState == "game") then
+    mapa.draw(gameState)
+    love.graphics.setColor(1,1,1,1)
+    player.draw()
+    
+    for i, mobs in ipairs(monstros) do
+      monster.draw(mobs,fonte,delta) 
     end
+   
+  end
+  if gameState == 'boss' then
+    mapa.draw(gameState)
+    Boss.draw()
+    player.draw()
+  end
+end
+-- Aqui conteudo do Boss
+
+
+-- Aqui conteudo do Game Over
+    if(gameState == "GameOver") then
+      love.graphics.setBackgroundColor(0,0,0)
+      love.graphics.setColor(1,0,0,1)
+      thisfonte = love.graphics.setNewFont(fonteWay,72)
+      local textOver = "Game Over"
+      love.graphics.print(textOver,love.graphics.getWidth()/2 - thisfonte:getWidth(textOver)/2,love.graphics.getHeight()/2 - thisfonte:getHeight(textOver)/2)
+      thisfonte = love.graphics.setNewFont(fonteWay,20)
+      love.graphics.setColor(0,1,1,1)
+      love.graphics.print("Pontuação: "..player.pontos,love.graphics.getWidth()/2 - thisfonte:getWidth("Pontuação: ")/2,love.graphics.getHeight()/2 +  thisfonte:getHeight("Pontuação: ") * 2)
   end
   
-  if jogador.estaVivo then
-    local imgJogadorDirecaoCorreta = definirImagemDirecaoJogador()
-    love.graphics.draw(imgJogadorDirecaoCorreta, quadrosJogador[direcaoJogador][passoJogador], jogador.x, jogador.y)
-
+  if(gameState == 'vitoria') then
+    love.graphics.setBackgroundColor(0,0,0)
+    love.graphics.setColor(238/255,201/255,0/255,1)
+    thisfonte = love.graphics.setNewFont(fonteWay,72)
+    local textOver = "Vitoria"
+    love.graphics.print(textOver,love.graphics.getWidth()/2 - thisfonte:getWidth(textOver)/2,love.graphics.getHeight()/2 - thisfonte:getHeight(textOver)/2)
+    thisfonte = love.graphics.setNewFont(fonteWay,20)
+    love.graphics.setColor(0,1,1,1)
+    love.graphics.print("Pontuação: "..player.pontos,love.graphics.getWidth()/2 - thisfonte:getWidth("Pontuação: ")/2,love.graphics.getHeight()/2 +  thisfonte:getHeight("Pontuação: ") * 2)
   end
 end
 
+-- Update ------------------------------------------------
 function love.update(dt)
-  if jogador.estaVivo then    
-    if status == false then
-      tempo = tempo + dt
-      if tempo > 0.2 then
-        local x = jogador.x
-        local y = jogador.y
-        
-        tempo = 0.1
-        passoJogador = passoJogador + 1
-        if love.keyboard.isDown('right', 'd') then
-          x = x + jogador.velocidade
-        elseif love.keyboard.isDown('left', 'a') then
-          x = x - jogador.velocidade
-        elseif love.keyboard.isDown('up') then
-          y = y - jogador.velocidade
-        elseif love.keyboard.isDown('down') then
-          y = y + jogador.velocidade
+  delta = dt
+  controleStatusGame(dt)
+  -- Aqui conteudo do menu
+  if(gameState == "intro") then
+  end
+  if(gameState == "menu") then
+end
+
+-- Aqui conteudo do Jogo
+  if(gameState == "game" or gameState == 'boss') then
+    if(gameState == "game") then        
+    -- Movimenta os Monstros e controla a visão/ataque dos mesmos assim como drop de itens
+      if(player.getPontos() >= 10) then
+        mapa.trocaFase() 
+        Boss.criaColisao()
+        gameState = 'boss'
+      end
+    monster.update(monstros,player,medidaMoviemento,dt,podeAtacar,player.lifeBar(),randomPosX,randomPosY)
+   end
+   
+    if(gameState == 'boss') then
+      mapa.update(dt)
+    end
+     -- Movimento do Player
+    player.update(medidaMoviemento, dt, mapa,gameState)
+  end
+-- Aqui conteudo ???
+end
+
+-- Controlador de menu e tela Game Over ------------------------------------------------
+function controleStatusGame(dt)
+  if(gameState == 'intro' or gameState == 'menu') then
+    if(gameState == 'intro') then
+      timeMenuController = timeMenuController + dt
+        if(timeMenuController > 10 ) then
+          gameState = 'menu'
         end
-        
-        jogador.x = x
-        jogador.y = y
-        
-        if passoJogador > passoMaximo then
-          passoJogador = 1
+      end
+      menu.update(dt,gameState,time)
+      time = time - dt * 1
+      if(time <=0) then
+        time = 0
+      end
+    end
+  
+    if(gameState == "game" or gameState == 'boss') then
+      if(player.lifeBar().getValor() == 0) then
+        gameState = 'GameOver' 
+      end
+    end
+    if gameState == 'boss' then
+      if(Boss.getVida() <= ((Boss.getMaxVida() / 100) * 100)) and (Boss.getVida() > ((Boss.getMaxVida() / 100) * 75)) then
+        Boss.setStageOne()
+      elseif (Boss.getVida() <= ((Boss.getMaxVida() / 100) * 75)) and (Boss.getVida() > ((Boss.getMaxVida() / 100) * 50)) then
+        Boss.setStageTwo()
+      elseif (Boss.getVida() <= ((Boss.getMaxVida() / 100)) * 50) then
+        Boss.setStageThree()
+      end
+    if(Boss.vivo() == false) then
+      gameState = 'vitoria'
+    end
+    Boss.update(dt,player)
+  end
+end
+ 
+ -- Key ------------------------------------------------
+function love.keyreleased(key)
+  if gameState == 'game' or gameState == 'boss' then
+    if gameState == 'game' then
+      for i, monst in ipairs(monstros) do
+        if key == 'd' and player.ataque(monst) and (player.usandoSkill() == false)then
+          monster.dano(monst,player.getAtq())
+        end
+      end
+      if key =='w' then
+        player.lifeBar().imortal()
+          if(player.skill()) then
+            for i, monst in ipairs(monstros) do
+              monster.dano(monst,player.getAtq() * 3)
+            end
+          end
+        end
+      end
+  
+      if gameState == 'boss' then
+        if key == 'd' and Boss.ataque(player) and (player.usandoSkill() == false)then
+          Boss.dano(player.getAtq())
+        end
+        if key =='w' then
+          player.lifeBar().imortal()
+        if(player.skill()) then
+          Boss.dano(player.getAtq() * 3)
         end
       end
     end
   end
-end
-
-function love.keypressed(keyPressed)
-  if quadrosJogador[keyPressed] then
-    direcaoJogador = keyPressed
-    status = false
+  
+  if gameState == 'intro' or gameState == 'menu' then
+    if key then
+      gameState = 'game'
+      music:stop()
+      sound:stop()
+    end
+  end
+  if gameState == 'GameOver' then
+    if key == 'r' then
+      love.load()
+      gameState ='game'
+    end
   end
   
-  if keyPressed == "kp-" or keyPressed == "kp+" then
+  if gameState == 'boss' then
+    if key == "n" then
+      Boss.setStageOne()
+    elseif key == "m" then
+      Boss.setStageTwo()
+    elseif key == "p" then
+      Boss.setStageThree()
+    end
+  end
+--[[ if key == "kp-" or keyPressed == "kp+" then
     volumeAtual = musicaFundo:getVolume()
     if keyPressed == "kp-" then
       volumeAtual = volumeAtual - 0.1
@@ -198,24 +223,5 @@ function love.keypressed(keyPressed)
     end
     
     musicaFundo:setVolume(volumeAtual)
-  end
-end
-
-function love.keyreleased(keyReleased)
-  if quadrosJogador[keyReleased] then
-    status = true
-    passo = 1
-  end
-end
-
-function definirImagemDirecaoJogador()
-  if direcaoJogador == 'right' then
-    return jogador.imgdireita
-  elseif direcaoJogador == 'left' then
-    return jogador.imgesquerda
-  elseif direcaoJogador == 'up' then
-    return jogador.imgcima
-  elseif direcaoJogador == 'down' then
-    return jogador.imgbaixo
-  end
+  end --]]
 end
