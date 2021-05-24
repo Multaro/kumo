@@ -114,25 +114,7 @@ end
       
     monster.update(monstros,player,medidaMoviemento,dt,podeAtacar,player.lifeBar(),randomPosX,randomPosY)
     
-    if(gameState == "game" or gameState == 'boss') then
-      if(player.lifeBar().getValor() == 0) then
-        gameState = 'GameOver' 
-      end
-    end
     
-    if gameState == 'boss' then
-      if(Boss.getVida() <= ((Boss.getMaxVida() / 100) * 100)) and (Boss.getVida() > ((Boss.getMaxVida() / 100) * 75)) then
-        Boss.setStageOne()
-      elseif (Boss.getVida() <= ((Boss.getMaxVida() / 100) * 75)) and (Boss.getVida() > ((Boss.getMaxVida() / 100) * 50)) then
-        Boss.setStageTwo()
-      elseif (Boss.getVida() <= ((Boss.getMaxVida() / 100)) * 50) then
-        Boss.setStageThree()
-      end
-    if(Boss.vivo() == false) then
-      gameState = 'vitoria'
-    end
-    Boss.update(dt,player)
-  end
     
    end
    
@@ -160,7 +142,25 @@ function controleStatusGame(dt)
         time = 0
       end
     end
-  
+  if(gameState == "game" or gameState == 'boss') then
+      if(player.lifeBar().getValor() == 0) then
+        gameState = 'GameOver' 
+      end
+    end
+    
+    if gameState == 'boss' then
+      if(Boss.getVida() <= ((Boss.getMaxVida() / 100) * 100)) and (Boss.getVida() > ((Boss.getMaxVida() / 100) * 75)) then
+        Boss.setStageOne()
+      elseif (Boss.getVida() <= ((Boss.getMaxVida() / 100) * 75)) and (Boss.getVida() > ((Boss.getMaxVida() / 100) * 50)) then
+        Boss.setStageTwo()
+      elseif (Boss.getVida() <= ((Boss.getMaxVida() / 100)) * 50) then
+        Boss.setStageThree()
+      end
+    if(Boss.vivo() == false) then
+      gameState = 'vitoria'
+    end
+    Boss.update(dt,player)
+  end
     
 end
  

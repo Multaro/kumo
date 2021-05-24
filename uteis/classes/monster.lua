@@ -413,7 +413,7 @@ function monster.dano(mob,valor)
   function monster.ataque(mob,posX,posY,width,height,podeAtacar) 
   -- verifica se o monstro pode ou não atacar
   -- monstro da tabela, posição X, posição Y, largura, altura
-    if((mob.posX < posX + width/2) and (mob.posX + mob.quadro > posX) and (mob.posY < posY + height/2) and (mob.posY + mob.quadro > posY) and(podeAtacar == true)) then
+    if((mob.posX < posX + width) and (mob.posX + mob.quadro > posX) and (mob.posY < posY + height) and (mob.posY + mob.quadro > posY) and(podeAtacar == true)) then
       mob.status = 'ataque'
       if(mob.direcao == 'up' or mob.direcao == 'atqUp') then
         if(mob.direcao == 'up') then
