@@ -56,6 +56,7 @@ function menu.load()
 end
 
 function menu.draw(gameState,time,fonteWay)
+  love.graphics.setBackgroundColor(1,1,1,1)
     newFont = love.graphics.newFont(fonteWay,25)
     love.graphics.setFont(newFont)
   if(gameState == 'intro') then

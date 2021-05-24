@@ -1,5 +1,6 @@
 -- Apelidos para as funções
 local newQuad = love.graphics.newQuad
+local hc = require 'HC'
 
 -- Dados do jogador
 
@@ -15,11 +16,15 @@ local quantidadeQuadrosMapa = 6
 local proximaFase
 local quadrosIntransponiveis = {}
 local colisaoPlayer = true
+local direcao = ''
 
 
-
-function mapa.criaMapa() 
-
+function mapa.criaMapa()
+  mapa.angle = 0 
+  circulo ={}
+  circulo.x = 470
+  circulo.y = 350
+  circulo.radius = 350
 local primeiraFase = {
 -- 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30
   {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3}, -- 1
@@ -74,6 +79,7 @@ local segundaFase = {
   {6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 3} -- 23
 }
 
+faseBoss = {imgBack = love.graphics.newImage('uteis/imgs/Boss/microndas.png'),imgPrato = love.graphics.newImage('uteis/imgs/Boss/microndas2.png'),angle = 0}
 
 
   love.graphics.setBackgroundColor(0, 0, 0)
@@ -108,12 +114,14 @@ local segundaFase = {
   -- Configurando as músicas e efeitos sonoros
  -- musicaFundo:setLooping(true)
  -- musicaFundo:play()
+  
+
+
 end
 
-function mapa.draw()
-   
-  
-  
+function mapa.draw(gameState)
+
+  if(gameState =='game') then
   for posicao, linha in ipairs(mapa.fases[proximaFase]) do
     for coluna, quadro in ipairs(linha) do
       if quadro ~= 0 then
@@ -121,38 +129,37 @@ function mapa.draw()
       end
     end
   end
-
-
-  for x, quad in ipairs(quadrosIntransponiveis) do
-    love.graphics.setColor(1,1,1,0)
-    love.graphics.rectangle('fill',quad.x ,quad.y,quad.width,quad.height)
-    love.graphics.setColor(1,1,1,1)
-end
 end
 
-function mapa.colisao(player,playerPosX,playerPosY,direcao)
-    colisaoPlayer = true
+  for i, quad in ipairs(quadrosIntransponiveis) do
+    quad:draw()
+  end
+
+
+  if(gameState =='boss') then
+    mapa.resetaColisao()
+    love.graphics.circle('fill',circulo.x,circulo.y,circulo.radius)
+    love.graphics.draw(faseBoss.imgBack,0,0)
     
-    for i, quadroColisao in ipairs(quadrosIntransponiveis) do
-        if(quadroColisao.x + quadroColisao.width > player.getPosX() and quadroColisao.y + quadroColisao.height > player.getPosY() and quadroColisao.x < player.getPosX() + player.getQuadro()/2 and quadroColisao.y < player.getPosY() + player.getQuadro()/2) then
-            colisaoPlayer = false
-            if(direcao == 'up') then
-                player.setPosY(math.floor(playerPosY + 20))
-            
-            elseif(direcao == 'down') then
-                player.setPosY(math.floor(playerPosY - 20))
-            
-            elseif(direcao == 'left') then
-                player.setPosX(math.floor(playerPosX + 20))
-            
-            elseif(direcao == 'right') then
-                player.setPosX(math.floor(playerPosX - 20))
-            end
-           
-           
-        end
-    end
-    return colisaoPlayer
+   love.graphics.push()
+   love.graphics.translate(love.graphics.getWidth()/2,love.graphics.getHeight()/2)
+   love.graphics.rotate(faseBoss.angle)
+   love.graphics.translate(-love.graphics.getWidth()/2,-love.graphics.getHeight()/2)
+   love.graphics.draw(faseBoss.imgPrato,0,0)
+   love.graphics.pop()
+
+   --love.graphics.draw(faseBoss.imgPrato,0,0, faseBoss.angle, faseBoss.imgPrato:getWidth()/2, faseBoss.imgPrato:getHeight()/2, faseBoss.imgPrato:getWidth(), faseBoss.imgPrato:getHeight())
+  end
+  
+
+  
+end
+
+function mapa.update(dt)
+
+  faseBoss.angle = faseBoss.angle + dt * math.pi/2
+	faseBoss.angle = faseBoss.angle % (2*math.pi)
+  
 end
 
 
@@ -164,7 +171,7 @@ function mapa.correMapa()
         for coluna, quadro in ipairs(linha) do
           if quadro ~= 0 then
             if(quadro == 8) then
-                quadroNovo = {x = (coluna - 1) * tamanhoQuadroMapa, y = (posicao - 1) * tamanhoQuadroMapa, width = tamanhoQuadroMapa, height = tamanhoQuadroMapa}
+                quadroNovo = hc.rectangle((coluna - 1) * tamanhoQuadroMapa, (posicao - 1) * tamanhoQuadroMapa,tamanhoQuadroMapa, tamanhoQuadroMapa)
                 table.insert(quadrosIntransponiveis,quadroNovo)
             end
           end
@@ -175,9 +182,41 @@ end
 
 function mapa.trocaFase() 
     proximaFase = proximaFase + 1
+    mapa.resetaColisao()
     if(proximaFase > 2) then
         proximaFase = 2
     end
+    mapa.correMapa()
+end
+
+
+function mapa.resetaColisao()
+  for i, quad in ipairs(quadrosIntransponiveis) do
+    hc.remove(quad)
+  end
+  quadrosIntransponiveis = {}
+end
+function mapa.circleAndRectangleOverlap(jogador)
+  local circle_distance_x = math.abs(circulo.x - jogador.getPosX() - jogador.getQuadro()/2)
+  local circle_distance_y = math.abs(circulo.y - jogador.getPosY() - jogador.getQuadro()/2)
+
+  if circle_distance_x > (jogador.getQuadro()/2 + circulo.radius) or circle_distance_y > (jogador.getQuadro()/2 + circulo.radius) then
+      return false
+  elseif circle_distance_x <= (jogador.getQuadro()/2) or circle_distance_y <= (jogador.getQuadro()/2) then
+      return true
+  end
+
+  return (math.pow(circle_distance_x - jogador.getQuadro()/2, 2) + math.pow(circle_distance_y - jogador.getQuadro()/2, 2)) <= math.pow(circulo.radius, 2)
+end
+
+
+function mapa.updateAngle(jogador) 
+  mapa.angle = mapa.mathAngle(jogador.getPosX(),jogador.getPosY(), circulo.x + circulo.radius/2,circulo.y + circulo.radius/2)
+  return  mapa.angle
+end
+
+function mapa.mathAngle(x1, y1, x2, y2)
+  return math.deg(math.atan2(y1 - y2, x1 - x2))
 end
 
 

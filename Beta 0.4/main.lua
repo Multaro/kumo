@@ -20,7 +20,7 @@ local fonte
 local delta
 local medidaMoviemento = 64
 local podeAtacar = false
-local gameState = 'boss'
+local gameState = 'game'
 local randomPosX
 local randomPosY
 
@@ -37,15 +37,18 @@ function love.load()
 
  local mob = {}
  table.insert(monstros, monster.createMonster(mob,'Rinoceronte','uteis/imgs/monster/rino.png',128,500,100,10,100)) 
- Boss.createBoss()
+ if(gameState == 'boss') then
+  Boss.createBoss(gameState)
+ end
+ Boss.createBoss(gameState)
  mapa.criaMapa()
 end
 
 
 
+
+
 -- Draw ------------------------------------------------
-
-
 function love.draw()
   
   -- Aqui conteudo do Menu
@@ -57,7 +60,7 @@ function love.draw()
   -- Aqui conteudo do Jogo
 if(gameState == "game" or gameState == 'boss') then
   if(gameState == "game") then
-    mapa.draw()
+    mapa.draw(gameState)
     love.graphics.setColor(1,1,1,1)
     player.draw()
     
@@ -67,7 +70,7 @@ if(gameState == "game" or gameState == 'boss') then
    
   end
   if gameState == 'boss' then
-    mapa.draw()
+    mapa.draw(gameState)
     Boss.draw()
     player.draw()
   end
@@ -115,19 +118,24 @@ end
   
     if(gameState == "game" or gameState == 'boss') then
       if(gameState == "game") then
+        
     -- Movimenta os Monstros e controla a visão/ataque dos mesmos assim como drop de itens
-    if(player.getPontos() >= 10) then
-      mapa.trocaFase() 
-      gameState = 'boss'
-    end
+        if(player.getPontos() >= 10) then
+          mapa.trocaFase() 
+          Boss.criaColisao()
+          gameState = 'boss'
+        end
     
      
     monster.update(monstros,player,medidaMoviemento,dt,podeAtacar,player.lifeBar(),randomPosX,randomPosY)
   
     
-     end
+   end
+   if(gameState == 'boss') then
+     mapa.update(dt)
+    end
      -- Movimento do Player
-        player.update(medidaMoviemento, dt, mapa)
+        player.update(medidaMoviemento, dt, mapa,gameState)
   end
    
 -- Aqui conteudo ???
@@ -173,6 +181,8 @@ end
         Boss.update(dt,player)
   end
 end
+
+
  
  -- Key ------------------------------------------------
 

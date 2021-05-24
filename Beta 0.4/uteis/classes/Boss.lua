@@ -4,7 +4,10 @@ local quadros = {}
 local stage1 = {}
 local stage2 = {}
 local stage3 = {}
-function Boss.createBoss()
+local retangulo1 = nil
+local retangulo2 = nil
+hc = require 'HC'
+function Boss.createBoss(gameState)
 Boss.x = love.graphics.getWidth()/2 - 128
 Boss.y = love.graphics.getHeight()/2 - 128
 Boss.pos = 0
@@ -15,13 +18,16 @@ Boss.walkright = false
 Boss.attack = false
 Boss.static = true
 Boss.throw = false
+Boss.damage = false
+
+  
 
 
 quadros.quadros = 256
 quadros.timer = 0
 quadros.row = 0
 quadros.column = 0
-
+Boss.colisao = nil
 
 stage1.start = false
 stage1.timer = 0
@@ -50,7 +56,15 @@ lifeMob.createLifeBoss(Boss.life, 20, 20, Boss.vida)
   imgShot = love.graphics.newImage('uteis/imgs/Boss/cereja.png')
 end
 
+function Boss.criaColisao()
+    retangulo1 = hc.rectangle(love.graphics.getWidth()/2 - 50 + 405, love.graphics.getHeight()/2 - 155, 100, 280)
+    retangulo2 = hc.rectangle(love.graphics.getWidth()/2 - 50 - 415, love.graphics.getHeight()/2 - 50, 105, 220)
+    Boss.colisao = hc.rectangle(Boss.x,Boss.y,quadros.quadros/3,quadros.quadros/3)
+end
+
+
 function Boss.draw()
+  
   --love.graphics.setBackgroundColor(1, 1, 1)
   --love.graphics.setColor(1, 0, 0)
   lifeMob.draw(Boss.life)
@@ -70,12 +84,12 @@ function Boss.draw()
   love.graphics.print('Boss.pos: ' .. Boss.pos, 0, 180)
   love.graphics.setColor(1,1,1,1)
   love.graphics.draw(quadros.img, Boss.quads[Boss.pos], Boss.x, Boss.y)
-  
-  love.graphics.rectangle('line', stage1.shot.x - (stage1.shot.width / 2) + (quadros.quadros / 2), stage1.shot.y - (stage1.shot.heigth / 2) + (quadros.quadros / 2), stage1.shot.width, stage1.shot.heigth) -- hit box ataque stage1
+  Boss.colisao:draw()
+  --love.graphics.rectangle('line', stage1.shot.x - (stage1.shot.width / 2) + (quadros.quadros / 2), stage1.shot.y - (stage1.shot.heigth / 2) + (quadros.quadros / 2), stage1.shot.width, stage1.shot.heigth) -- hit box ataque stage1
   
   -- Pilar teste
-  love.graphics.rectangle('fill', love.graphics.getWidth()/2 - 50 + 300, love.graphics.getHeight()/2 - 50, 100, 100)
-  love.graphics.rectangle('fill', love.graphics.getWidth()/2 - 50 - 300, love.graphics.getHeight()/2 - 50, 100, 100)
+ -- love.graphics.rectangle('fill', love.graphics.getWidth()/2 - 50 + 405, love.graphics.getHeight()/2 - 155, 100, 280)
+  --love.graphics.rectangle('fill', love.graphics.getWidth()/2 - 50 - 415, love.graphics.getHeight()/2 - 50, 105, 220)
   --/ Pilar teste
   
   for i, newshots in ipairs(stage2) do
@@ -97,6 +111,8 @@ end
 
 
 function Boss.update(dt,player)
+
+  Boss.colisao:moveTo(Boss.x + quadros.quadros/2,Boss.y + quadros.quadros/2)
   Boss.animationController()
   Boss.bossSkills(dt,player)
   quadros.timer = quadros.timer + dt
@@ -120,6 +136,7 @@ function Boss.update(dt,player)
         Boss.walkright = false
         Boss.static = false
         Boss.throw = false
+        Boss.damage = false
         Boss.x = Boss.x - 150 * dt
       end
       if Boss.y > (0 - (quadros.quadros/15)) then
@@ -138,6 +155,7 @@ function Boss.update(dt,player)
         Boss.walkright = false
         Boss.static = false
         Boss.throw = false
+        Boss.damage = false
         Boss.x = Boss.x - 201 * dt
       else
         Boss.x = Boss.x + 201 * dt
@@ -187,7 +205,8 @@ function Boss.stageOne(dt,player)
     Boss.walkright = false
     Boss.static = false
     Boss.throw = false
-    
+    Boss.damage = false
+
     if Boss.pos >= 10 then
       stage1.shot.width = 200
       stage1.shot.heigth = 200
@@ -203,6 +222,8 @@ function Boss.stageOne(dt,player)
       Boss.throw = false
       Boss.static = true
       Boss.attack = false
+      Boss.damage = false
+
       stage1.timer = 0
     end
   end
@@ -219,6 +240,8 @@ function Boss.stageTwo(dt)
     Boss.attack = false
     Boss.static = false
     Boss.walkright = true
+    Boss.damage = false
+
     Boss.x = Boss.x + stage2.speed
   end
   if stage2.mov == false then
@@ -230,6 +253,8 @@ function Boss.stageTwo(dt)
     Boss.static = false
     Boss.attack = false
     Boss.walkright = false
+    Boss.damage = false
+
     Boss.x = Boss.x - stage2.speed
   end
   stage2.speed = stage2.speed + 0.008
@@ -242,6 +267,7 @@ function Boss.stageTwo(dt)
     Boss.static = false
     Boss.attack = false
     Boss.walkright = false
+    Boss.damage = false
 
     if Boss.pos == 9 then
       if stage2.cd > 0.1 then
@@ -255,6 +281,8 @@ function Boss.stageTwo(dt)
       Boss.static = false
       Boss.throw = false
       Boss.walkright = false
+      Boss.damage = false
+
       stage2.timer = 0
     end
   end
@@ -269,6 +297,8 @@ function Boss.stageThree(dt)
     Boss.attack = false
     Boss.static = true
     Boss.walkright = false
+    Boss.damage = false
+
   end
   if stage3.timer > 5 and stage3.timer < 7 then
     Boss.throw = true
@@ -276,6 +306,8 @@ function Boss.stageThree(dt)
     Boss.attack = false
     Boss.static = false
     Boss.walkright = false
+    Boss.damage = false
+
     if stage3.cd > 0.5 then
       newshots = {id = 0, x = Boss.x + (quadros.quadros - imgShot:getWidth()), y = Boss.y + quadros.quadros / 2, angle = 0, width = imgShot:getWidth(), heigth = imgShot:getHeight(), img = imgShot}
       table.insert(stage3, newshots)
@@ -303,6 +335,8 @@ function Boss.stageThree(dt)
     Boss.attack = false
     Boss.static = true
     Boss.walkright = false
+    Boss.damage = false
+
   end
   
   stage3.cd = stage3.cd + dt
@@ -313,11 +347,12 @@ function Boss.bossSkills(dt,player)
   for i, newshots in ipairs(stage2) do
     newshots.angle = newshots.angle + math.pi * dt
     newshots.y = newshots.y + (100 * dt)
+
     -- Teste de pilar
-    if Boss.collider(love.graphics.getWidth()/2 + (300 - 50), love.graphics.getHeight()/2 - 50, 100, 100, newshots.x, newshots.y, newshots.width, newshots.heigth) then
+    if Boss.collider(love.graphics.getWidth()/2 - 50 + 405, love.graphics.getHeight()/2 - 155, 100, 280, newshots.x, newshots.y, newshots.width, newshots.heigth) then
       table.remove(stage2, i)
     end
-    if Boss.collider(love.graphics.getWidth()/2 - (300 + 50), love.graphics.getHeight()/2 - 50, 100, 100, newshots.x, newshots.y, newshots.width, newshots.heigth) then
+    if Boss.collider(love.graphics.getWidth()/2 - 50 - 415, love.graphics.getHeight()/2 - 50, 105, 220, newshots.x, newshots.y, newshots.width, newshots.heigth) then
       table.remove(stage2, i)
     end
     if(Boss.collider(player.getPosX(),player.getPosY(),player.getQuadro()/2,player.getQuadro()/2,newshots.x, newshots.y, newshots.width, newshots.heigth)) then
@@ -337,12 +372,12 @@ function Boss.bossSkills(dt,player)
     end
     newshots.angle = newshots.angle + math.pi * dt
     if newshots.id == 0 then
-      if Boss.collider(love.graphics.getWidth()/2 + (300 - 50), love.graphics.getHeight()/2 - 50, 100, 100, newshots.x, newshots.y, newshots.width, newshots.heigth) then
+      if Boss.collider(love.graphics.getWidth()/2 - 50 + 405, love.graphics.getHeight()/2 - 155, 100, 280, newshots.x, newshots.y, newshots.width, newshots.heigth) then
         table.remove(stage3, i)
       end
       newshots.x = newshots.x + 100 * dt
     elseif newshots.id == 1 then
-      if Boss.collider(love.graphics.getWidth()/2 - (300 + 50), love.graphics.getHeight()/2 - 50, 100, 100, newshots.x, newshots.y, newshots.width, newshots.heigth) then
+      if Boss.collider(love.graphics.getWidth()/2 - 50 - 415, love.graphics.getHeight()/2 - 50, 105, 220, newshots.x, newshots.y, newshots.width, newshots.heigth) then
         table.remove(stage3, i)
       end
       newshots.x = newshots.x - 100 * dt
@@ -389,6 +424,7 @@ function Boss.geraAnimacao(y, x, maxY, maxX, img)
       end
     end
   end
+
 end
 
 function Boss.animationController()
@@ -402,6 +438,8 @@ function Boss.animationController()
     Boss.geraAnimacao(3, 2, 3, 2, 'uteis/imgs/Boss/bolo_static.png')
   elseif Boss.attack == true and Boss.static == false and Boss.throw == false and Boss.walkleft == false and Boss.walkright == false then
     Boss.geraAnimacao(4, 3, 4, 3, 'uteis/imgs/Boss/bolo_atk_area.png')
+  elseif Boss.damage == true and Boss.attack == false and Boss.static == false and Boss.throw == false and Boss.walkleft == false and Boss.walkright == false then
+    Boss.geraAnimacao(1, 3, 2, 4, 'uteis/imgs/Boss/bolochorando2.png')
   end
 end
 
@@ -409,6 +447,13 @@ function Boss.collider(x1, y1, w1, h1, x2, y2, w2, h2)
   return x2 + w2 >= x1 and y2 + h2 >= y1 and x2 <= x1 + w1 and y2 <= y1 + h1
 end
 function Boss.dano(valor)
+    Boss.damage = true
+    Boss.throw = false
+    Boss.walkleft = false
+    Boss.attack = false
+    Boss.static = false
+    Boss.walkright = false
+ 
     -- monstro da tabela, dano
         if((Boss.vida - valor) <=0 ) then
           Boss.vida = 0
@@ -440,5 +485,11 @@ function Boss.vivo()
         return false
     end
 end
+
+function Boss.isStage2Collision()
+  return stage2.start
+end
+
+
 
 return Boss
