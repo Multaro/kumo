@@ -1,5 +1,8 @@
 local Q = love.graphics.newQuad
 local k = love.keyboard.isDown
+local hc = require 'HC'
+local mapa = require("uteis.classes.mapa")
+local Boss = require("uteis.classes.Boss")
 local monster = require("uteis.classes.monster")
 local lifePersonagem = require("uteis.classes.lifePersonagem") -- Import barra de vida do player
 local maxPosAtaque = 6
@@ -7,7 +10,11 @@ local maxPosicaoCorrida = 8
 local player = {}
 local skill = {}
 
+
 function player.createPlayer(posX,posY,img,quadro)
+
+    
+
 
     player.posX = posX
     player.posY = posY
@@ -41,6 +48,11 @@ function player.createPlayer(posX,posY,img,quadro)
     player.Quadros['atqLeft'] = {}
     player.Quadros['atqRight'] = {}
     player.qtdQuadros = player.qtdQuadrosX * player.qtdQuadrosY
+    player.hitBox = hc.rectangle(player.getPosX(),player.getPosY(),player.getColisaoWidth(),player.getQuadro())
+      
+
+
+
     skill.img = love.graphics.newImage('uteis/imgs/player/playerSkillEfect2.png')
     skill.img:setFilter("nearest","linear")
     skill.pos = 1
@@ -133,12 +145,21 @@ end
 function player.addAtq(ataque)
   player.atq = player.atq + ataque
 end
-
+function player.getColisaoX() 
+  return player.getPosX()+player.getQuadro()/4
+ end
+ function player.getColisaoWidth() 
+  return player.getQuadro()/2
+ end
 
 function player.draw()
 
-    love.graphics.print(player.getPosX(),10,40)
-    love.graphics.print(player.getPosY(),10,50)
+    -- love.graphics.print(player.getPosX(),10,40)
+    --  love.graphics.print(player.getPosY(),10,50)
+    --love.graphics.rectangle('fill',player.getPosX()+player.getQuadro()/4,player.getPosY(),player.getQuadro()/2,player.getQuadro())
+    --love.graphics.print(player.getColisaoX(),10,60)
+
+   -- player.hitBox:draw()
     lifePersonagem.lifePersonagemDraw(player.skillPronta())
     love.graphics.setColor(1,1,1,1)
     if(skill.ativo == false) then
@@ -149,7 +170,7 @@ function player.draw()
       love.graphics.draw(skill.imgGarra,(love.graphics.getWidth()/2 - skill.imgGarra:getWidth()/2),(love.graphics.getHeight()/2 - skill.imgGarra:getHeight()/2))
    end
     end
-
+    
 end
 function player.lifeBar()
   return lifePersonagem
@@ -204,53 +225,54 @@ if(player.status == 'caminhando') then
           end
         end
   end
-function player.movimenta(medidaMoviemento, dt, mapa)
+function player.movimenta(medidaMoviemento, dt, mapa,gameState)
+  velocidade = (medidaMoviemento * 10)* dt
   player.controlaCdSkill(dt)
   playerPosX = player.getPosX()
   playerPosY = player.getPosY()
   if(player.status == 'caminhando') then
     player.sleepTime = player.sleepTime + dt * 3
     if(player.sleepTime > 0.1) then   
-    if k("down") and player.colisaoBorda("down") and (mapa.colisao(player, playerPosX, playerPosY,'down'))then
+    if k("down") and player.colisaoBorda("down")then
         if(player.direcao == 'down') then
             player.pos = player.pos + 1
             player.posMax = maxPosicaoCorrida
-            player.setPosY(math.floor(player.getPosY() + (medidaMoviemento * 10)* dt))
+            player.setPosY(math.floor(player.getPosY() + velocidade))
           else
             player.pos = 1
             player.direcao = 'down'
             player.posMax = maxPosicaoCorrida
-            player.setPosY(math.floor(player.getPosY() + (medidaMoviemento * 10)* dt))
+            player.setPosY(math.floor(player.getPosY() + velocidade))
         end
 
 
-      elseif k("up") and player.colisaoBorda("up") and (mapa.colisao(player, playerPosX, playerPosY,'up')) then
+      elseif k("up") and player.colisaoBorda("up") then
         if(player.direcao == 'up') then
             player.pos = player.pos + 1
             player.posMax = maxPosicaoCorrida
-            player.setPosY(math.floor(player.getPosY() - (medidaMoviemento * 10)* dt))
+            player.setPosY(math.floor(player.getPosY() - velocidade))
           else
             player.pos = 1
             player.direcao = 'up'
             player.posMax = maxPosicaoCorrida
-            player.setPosY(math.floor(player.getPosY() - (medidaMoviemento * 10)* dt))
+            player.setPosY(math.floor(player.getPosY() - velocidade))
         end
 
         
-      elseif k("right") and player.colisaoBorda("right") and (mapa.colisao(player, playerPosX, playerPosY,'right')) then
+      elseif k("right") and player.colisaoBorda("right") then
         if(player.direcao == 'right') then
             player.pos = player.pos + 1
             player.posMax = maxPosicaoCorrida
-            player.setPosX(math.floor(player.getPosX() + (medidaMoviemento * 10)* dt))
+            player.setPosX(math.floor(player.getPosX() + velocidade))
         else
             player.pos = 1
             player.direcao = 'right'
             player.posMax = maxPosicaoCorrida
-            player.setPosX(math.floor(player.getPosX() + (medidaMoviemento * 10)* dt))
+            player.setPosX(math.floor(player.getPosX() + velocidade))
         end
 
         
-      elseif k("left") and player.colisaoBorda("left") and (mapa.colisao(player, playerPosX, playerPosY,'left')) then
+      elseif k("left") and player.colisaoBorda("left") then
         
         if(player.direcao == 'left') then
             player.pos = player.pos + 1
@@ -272,6 +294,13 @@ function player.movimenta(medidaMoviemento, dt, mapa)
       end
 
     end
+    if(gameState == 'boss') then
+      if(mapa.circleAndRectangleOverlap(player)) then
+         player.moveJogador(dt)
+      end
+    end
+
+
 end
 function player.colisaoBorda(direcao)
     -- posição X do monstro, posição Y do monstro, largura, altura, direção)
@@ -377,8 +406,24 @@ function player.skillPronta()
 end
 
 
-function player.update(medidaMoviemento, dt, mapa)
-  player.movimenta(medidaMoviemento, dt, mapa)
+function player.update(medidaMoviemento, dt, mapa,gameState)
+  player.hitBox:moveTo(player.getPosX() + player.getColisaoWidth(),player.getPosY()+player.getColisaoWidth())
+
+  for i,quadrado in pairs(hc.collisions(player.hitBox)) do
+    player.setPosX(player.getPosX() + quadrado.x)
+    player.setPosY(player.getPosY() + quadrado.y)
+  end
+  if(gameState == 'boss') then
+  for i,boss in pairs(hc.collisions(Boss.colisao)) do
+    if(Boss.isStage2Collision()) then
+      player.lifeBar().dano(0.1)
+    end
+  end
+end
+  
+
+
+  player.movimenta(medidaMoviemento, dt, mapa,gameState)
   player.controlaQuadrosSkill(dt)
   player.atualizaQuadros(dt)
        if(player.usandoSkill() == false) then
@@ -386,6 +431,45 @@ function player.update(medidaMoviemento, dt, mapa)
        end
        
 end
+
+function player.moveJogador(dt)
+
+  angle = mapa.updateAngle(player)
+
+      if angle >= -45 and angle < 0 then 
+        player.setPosX(player.getPosX() + 50 * dt)
+        player.setPosY(player.getPosY() + 50 * dt)
+      end
+      if angle >= -90 and angle < -45 then 
+        player.setPosX(player.getPosX() + math.pi * dt)
+        player.setPosY(player.getPosY() + 50 * dt)
+      end
+      if angle >= -135 and angle < -90 then 
+        player.setPosX(player.getPosX() + math.pi * dt)
+        player.setPosY(player.getPosY() - 50 * dt)
+      end
+      if angle <= 180 and angle < -135 then 
+        player.setPosX(player.getPosX() + math.pi * dt)
+        player.setPosY(player.getPosY() - 50 * dt)
+      end
+      if angle <= 180 and angle > 90 then 
+        player.setPosX(player.getPosX() - math.pi * dt)
+        player.setPosY(player.getPosY()- 50 * dt)
+      end
+      if angle <= 90 and angle > 45 then 
+        player.setPosX(player.getPosX() - 50 * dt)
+        player.setPosY(player.getPosY() + math.pi * dt)
+      end
+      if angle <= 45 and angle > 0 then 
+        player.setPosX(player.getPosX() - math.pi * dt)
+        player.setPosY(player.getPosY() + 50 * dt)
+      end
+
+
+end
+
+
+
 
 
 
