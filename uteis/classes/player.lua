@@ -12,6 +12,8 @@ local skill = {}
 
 
 function player.createPlayer(posX,posY,img,quadro)
+ 
+
   player.posX = posX
   player.posY = posY
   player.pontos = 0
@@ -164,6 +166,8 @@ end
 function player.getColisaoWidth() 
   return player.getQuadro()/2
 end
+
+
 
 function player.draw()
 

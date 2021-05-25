@@ -5,11 +5,18 @@ local item = require("uteis.classes.itens") -- Import itens
 local monster = {}
 local Q = love.graphics.newQuad
 local drops = {}
-
+itemColetaSound = love.audio.newSource("uteis/sounds/pegandoItem.mp3", "static")
+itemColetaSound:setLooping(false)
+itemColetaSound:setVolume(0.1)
 function monster.createMonster(mob,nome,img,quadro,posX,posY,atq,vida)
 --monster.createMonster(mob da tabela, nome do monstro, caminho da imagem, posição x, posição Y, dano do monstro, vida do monstro)    
     id = id+1
-    
+    mob.ataqueSound = love.audio.newSource("uteis/sounds/rinoAtk.wav", "static")
+    mob.ataqueSound:setLooping(false)
+    mob.ataqueSound:setVolume(0.1)
+    mob.deathSound = love.audio.newSource("uteis/sounds/rinoRoarMorte.wav", "static")
+    mob.deathSound:setLooping(false)
+    mob.deathSound:setVolume(0.1)
     mob.status = 'caminhando'
     mob.sleepTimeVisao = 0
     mob.sleepMain = 0
@@ -488,6 +495,7 @@ function monster.update(monstros,player,medidaMoviemento,dt,podeAtacar,lifePerso
           if(monster.getMaxPos(monst) == monster.getPos(monst)) then
              monst.status = 'caminhando'
              lifePersonagem.dano(monster.getAtq(monst))
+             monst.ataqueSound:play()
              podeAtacar = false
             end
             
@@ -496,8 +504,10 @@ function monster.update(monstros,player,medidaMoviemento,dt,podeAtacar,lifePerso
        
       end
     if monster.getVida(monst) == 0  then -- Se o monstro for morto, dropa o item
+      monst.deathSound:play()
       hc.remove(monster.getHitBox(monst))
       table.remove(monstros, i)
+
       
       player.addAtq(math.sqrt(player.pontos/100))
        local mob = {}
@@ -519,7 +529,7 @@ function monster.update(monstros,player,medidaMoviemento,dt,podeAtacar,lifePerso
         --elseif(item.getUtilidade(itensDropados) == 'moeda') then
             
         end
-      
+          itemColetaSound:play()
           table.remove(drops, i)
       end
     end
