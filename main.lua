@@ -6,6 +6,21 @@ local Boss = require("uteis.classes.Boss") -- Import Boss
 local mapa = require("uteis.classes.mapa") -- Import Mapa
 
 -- variaveis de controle ------------------------------------------------
+bossIntroSound = love.audio.newSource("uteis/sounds/microondassom.wav", "static")
+bossIntroSound:setLooping(false)
+bossIntroSound:setVolume(0.1)
+bossBackgroundSound = love.audio.newSource("uteis/sounds/microwaveBackgroundSound.wav", "static")
+bossBackgroundSound:setLooping(true)
+bossBackgroundSound:setVolume(0.3)
+bossSoundtrack = love.audio.newSource("uteis/sounds/bossSoundtrack.mp3", "static")
+bossSoundtrack:setLooping(true)
+bossSoundtrack:setVolume(0.05)
+playerAtaqueSound = love.audio.newSource("uteis/sounds/wolfAtk.mp3", "static")
+playerAtaqueSound:setLooping(false)
+playerAtaqueSound:setVolume(0.1)
+playerSkillSound = love.audio.newSource("uteis/sounds/wolfSkill.wav", "static")
+playerSkillSound:setLooping(false)
+playerSkillSound:setVolume(0.1)
 local time = 13
 local k = love.keyboard.isDown
 local sleepTime = 0
@@ -17,7 +32,7 @@ local fonte
 local delta
 local medidaMoviemento = 64
 local podeAtacar = false
-local gameState = 'game'
+local gameState = 'intro'
 local randomPosX
 local randomPosY
 
@@ -63,6 +78,8 @@ if(gameState == "game" or gameState == 'boss') then
     mapa.draw(gameState)
     Boss.draw()
     player.draw()
+    bossBackgroundSound:play()
+    bossSoundtrack:play()
   end
 end
 -- Aqui conteudo do Boss
@@ -70,6 +87,8 @@ end
 
 -- Aqui conteudo do Game Over
     if(gameState == "GameOver") then
+      bossBackgroundSound:stop()
+      bossSoundtrack:stop()
       love.graphics.setBackgroundColor(0,0,0)
       love.graphics.setColor(1,0,0,1)
       thisfonte = love.graphics.setNewFont(fonteWay,72)
@@ -78,6 +97,8 @@ end
       thisfonte = love.graphics.setNewFont(fonteWay,20)
       love.graphics.setColor(0,1,1,1)
       love.graphics.print("Pontuação: "..player.pontos,love.graphics.getWidth()/2 - thisfonte:getWidth("Pontuação: ")/2,love.graphics.getHeight()/2 +  thisfonte:getHeight("Pontuação: ") * 2)
+      thisfonte = love.graphics.setNewFont(fonteWay,32)
+      love.graphics.print("To be Continued...? ",love.graphics.getWidth()/2 - thisfonte:getWidth("To be Continued...? ")/2 + 20,love.graphics.getHeight()/2 +  thisfonte:getHeight("To be Continued...?") * 8)
   end
   
   if(gameState == 'vitoria') then
@@ -96,17 +117,19 @@ end
 function love.update(dt)
   delta = dt
   controleStatusGame(dt)
+  mapa.update(dt)
   -- Aqui conteudo do menu
   if(gameState == "intro") then
   end
   if(gameState == "menu") then
 end
 
--- Aqui conteudo do Jogo
+-- Aqui conteudo do Jogo/ Movimentação e controle da IA do monstro e player
   if(gameState == "game" or gameState == 'boss') then
     if(gameState == "game") then        
     -- Movimenta os Monstros e controla a visão/ataque dos mesmos assim como drop de itens
       if(player.getPontos() >= 10) then
+        bossIntroSound:play()
         mapa.trocaFase() 
         Boss.criaColisao()
         gameState = 'boss'
@@ -138,12 +161,12 @@ function controleStatusGame(dt)
         time = 0
       end
     end
-  
-    if(gameState == "game" or gameState == 'boss') then
+  if(gameState == "game" or gameState == 'boss') then
       if(player.lifeBar().getValor() == 0) then
         gameState = 'GameOver' 
       end
     end
+    
     if gameState == 'boss' then
       if(Boss.getVida() <= ((Boss.getMaxVida() / 100) * 100)) and (Boss.getVida() > ((Boss.getMaxVida() / 100) * 75)) then
         Boss.setStageOne()
@@ -157,6 +180,7 @@ function controleStatusGame(dt)
     end
     Boss.update(dt,player)
   end
+    
 end
  
  -- Key ------------------------------------------------
@@ -165,11 +189,13 @@ function love.keyreleased(key)
     if gameState == 'game' then
       for i, monst in ipairs(monstros) do
         if key == 'd' and player.ataque(monst) and (player.usandoSkill() == false)then
+          playerAtaqueSound:play()
           monster.dano(monst,player.getAtq())
         end
       end
       if key =='w' then
         player.lifeBar().imortal()
+        playerSkillSound:play()
           if(player.skill()) then
             for i, monst in ipairs(monstros) do
               monster.dano(monst,player.getAtq() * 3)
@@ -180,11 +206,13 @@ function love.keyreleased(key)
   
       if gameState == 'boss' then
         if key == 'd' and Boss.ataque(player) and (player.usandoSkill() == false)then
+          playerAtaqueSound:play()
           Boss.dano(player.getAtq())
         end
         if key =='w' then
           player.lifeBar().imortal()
         if(player.skill()) then
+          playerSkillSound:play()
           Boss.dano(player.getAtq() * 3)
         end
       end
@@ -193,6 +221,9 @@ function love.keyreleased(key)
   
   if gameState == 'intro' or gameState == 'menu' then
     if key then
+      for i, monst in ipairs(monstros) do
+       monster.criaColisao(monst)
+      end
       gameState = 'game'
       music:stop()
       sound:stop()

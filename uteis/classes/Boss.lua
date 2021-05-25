@@ -79,7 +79,7 @@ function Boss.draw()
   love.graphics.print('Boss.pos: ' .. Boss.pos, 0, 180)
   love.graphics.setColor(1,1,1,1)
   love.graphics.draw(quadros.img, Boss.quads[Boss.pos], Boss.x, Boss.y)
-  Boss.colisao:draw()
+  --Boss.colisao:draw()
   
   for i, newshots in ipairs(stage2) do
     love.graphics.draw(newshots.img, newshots.x, newshots.y, newshots.angle, 1, 1, newshots.width, newshots.heigth)
@@ -120,7 +120,7 @@ function Boss.update(dt,player)
   elseif stage2.start then
     if  Boss.x > (0 - (quadros.quadros/15)) and  Boss.y > (0 - (quadros.quadros/15)) then
       if Boss.x > (0 - (quadros.quadros/15)) then
-        Boss.pos = 0
+        
         Boss.attack = false
         Boss.walkleft = true
         Boss.walkright = false
@@ -139,7 +139,7 @@ function Boss.update(dt,player)
   elseif stage3.start then
     if math.floor(Boss.x) ~= love.graphics.getWidth()/2 - quadros.quadros / 2 and math.floor(Boss.y) ~= love.graphics.getHeight() / 2 - quadros.quadros / 2 then
       if math.floor(Boss.x) > love.graphics.getWidth()/2 - quadros.quadros / 2 then
-        Boss.pos = 0
+        
         Boss.attack = false
         Boss.walkleft = true
         Boss.walkright = false

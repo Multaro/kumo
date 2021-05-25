@@ -12,6 +12,8 @@ local skill = {}
 
 
 function player.createPlayer(posX,posY,img,quadro)
+ 
+
   player.posX = posX
   player.posY = posY
   player.pontos = 0
@@ -165,6 +167,8 @@ function player.getColisaoWidth()
   return player.getQuadro()/2
 end
 
+
+
 function player.draw()
 
     -- love.graphics.print(player.getPosX(),10,40)
@@ -182,7 +186,7 @@ function player.draw()
     if(skill.imgAtaque) then
       love.graphics.draw(skill.imgGarra,(love.graphics.getWidth()/2 - skill.imgGarra:getWidth()/2),(love.graphics.getHeight()/2 - skill.imgGarra:getHeight()/2))
     end
-  end  
+  end
 end
 
 function player.lifeBar()
