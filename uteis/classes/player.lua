@@ -331,7 +331,7 @@ function player.atualizaQuadros(dt)
     player.sleepTimePos = player.sleepTimePos + dt * 3
     if(player.sleepTimePos > 0.2) then
       player.pos = player.pos + 1
-      if(player.pos ==  player.posMax) then
+      if(player.pos ==  player.posMax+1) then
         player.pos = 1   
         if(player.direcao == 'atqUp') then
           player.direcao = 'up'
