@@ -144,7 +144,6 @@ function mapa.criaMapa()
   mapa.water = love.graphics.newImage("uteis/imgs/mapa/[A]Water1_pipo.png")
   mapa.img = love.graphics.newImage("uteis/imgs/mapa/[Base]BaseChip_pipo.png")
 
-
   mapa.fases = {}
 
   table.insert(mapa.fases, primeiraFase)
@@ -247,9 +246,8 @@ function mapa.criaMapa()
 end
 
 function mapa.draw(gameState)
-  
-  if(gameState =='game') then
-    love.graphics.setBackgroundColor(0,0,0)
+  if (gameState =='game') then
+    love.graphics.setBackgroundColor(0, 0, 0)
 
     for posicao, linha in ipairs(mapa.fases[1]) do
       for coluna, quadro in ipairs(linha) do
@@ -284,27 +282,24 @@ function mapa.draw(gameState)
         end
       end
     end
-
   end
   --[[ for i, quad in ipairs(quadrosIntransponiveis) do
     quad:draw()
   end --]]
-  
-  
 
-  if(gameState =='boss') then
+  if (gameState == 'boss') then
     mapa.resetaColisao()
     love.graphics.circle('fill', circulo.x, circulo.y, circulo.radius)
     love.graphics.draw(faseBoss.imgBack, 0, 0)
     
-   love.graphics.push()
-   love.graphics.translate(love.graphics.getWidth() / 2, love.graphics.getHeight() / 2)
-   love.graphics.rotate(faseBoss.angle)
-   love.graphics.translate(-love.graphics.getWidth() / 2, -love.graphics.getHeight() / 2)
-   love.graphics.draw(faseBoss.imgPrato, 0, 0)
-   love.graphics.pop()
+    love.graphics.push()
+    love.graphics.translate(love.graphics.getWidth() / 2, love.graphics.getHeight() / 2)
+    love.graphics.rotate(faseBoss.angle)
+    love.graphics.translate(-love.graphics.getWidth() / 2, -love.graphics.getHeight() / 2)
+    love.graphics.draw(faseBoss.imgPrato, 0, 0)
+    love.graphics.pop()
 
-   --love.graphics.draw(faseBoss.imgPrato,0,0, faseBoss.angle, faseBoss.imgPrato:getWidth()/2, faseBoss.imgPrato:getHeight()/2, faseBoss.imgPrato:getWidth(), faseBoss.imgPrato:getHeight())
+    --love.graphics.draw(faseBoss.imgPrato,0,0, faseBoss.angle, faseBoss.imgPrato:getWidth()/2, faseBoss.imgPrato:getHeight()/2, faseBoss.imgPrato:getWidth(), faseBoss.imgPrato:getHeight())
   end
 end
 
@@ -340,7 +335,7 @@ function mapa.correMapa()
   for posicao, linha in ipairs(mapa.fases[1]) do
     for coluna, quadro in ipairs(linha) do
       if quadro ~= 0 then
-        if(quadro == 8) then
+        if (quadro == 8) then
           quadroNovo = hc.rectangle((coluna - 1) * tamanhoQuadroMapa, (posicao - 1) * tamanhoQuadroMapa,tamanhoQuadroMapa, tamanhoQuadroMapa)
           table.insert(quadrosIntransponiveis, quadroNovo)
         end

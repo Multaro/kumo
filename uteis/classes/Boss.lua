@@ -19,50 +19,47 @@ damageSound = love.audio.newSource("uteis/sounds/bossDmg.wav", "static")
 damageSound:setLooping(false)
 damageSound:setVolume(0.5)
 
-
-
-
-
 hc = require 'uteis/HC'
+
 function Boss.createBoss(gameState)
-Boss.x = love.graphics.getWidth()/2 - 128
-Boss.y = love.graphics.getHeight()/2 - 128
-Boss.pos = 0
-Boss.cont = 0
-Boss.quads = {}
-Boss.walkleft = false
-Boss.walkright = false
-Boss.attack = false
-Boss.static = true
-Boss.throw = false
-Boss.damage = false
+  Boss.x = love.graphics.getWidth()/2 - 128
+  Boss.y = love.graphics.getHeight()/2 - 128
+  Boss.pos = 0
+  Boss.cont = 0
+  Boss.quads = {}
+  Boss.walkleft = false
+  Boss.walkright = false
+  Boss.attack = false
+  Boss.static = true
+  Boss.throw = false
+  Boss.damage = false
 
-quadros.quadros = 256
-quadros.timer = 0
-quadros.row = 0
-quadros.column = 0
-Boss.colisao = nil
+  quadros.quadros = 256
+  quadros.timer = 0
+  quadros.row = 0
+  quadros.column = 0
+  Boss.colisao = nil
 
-stage1.start = false
-stage1.timer = 0
-stage1.shot = {width = 0, heigth = 0, x = Boss.x, y = Boss.y}
+  stage1.start = false
+  stage1.timer = 0
+  stage1.shot = {width = 0, heigth = 0, x = Boss.x, y = Boss.y}
 
-stage2.start = false
-stage2.timer = 0
-stage2.mov = true
-stage2.cd = 0
-stage2.speed = 1
+  stage2.start = false
+  stage2.timer = 0
+  stage2.mov = true
+  stage2.cd = 0
+  stage2.speed = 1
 
-stage3.start = false
-stage3.timer = 0
-stage3.cd = 0
+  stage3.start = false
+  stage3.timer = 0
+  stage3.cd = 0
 
-Boss.life = {}
-Boss.vida = 900
-Boss.maxVida = 900
-Boss.dmg = 50
-Boss.animationController()
-lifeMob.createLifeBoss(Boss.life, 20, 20, Boss.vida)
+  Boss.life = {}
+  Boss.vida = 900
+  Boss.maxVida = 900
+  Boss.dmg = 50
+  Boss.animationController()
+  lifeMob.createLifeBoss(Boss.life, 20, 20, Boss.vida)
 
   love.graphics.setBackgroundColor(1, 1, 1)
   imgShot = love.graphics.newImage('uteis/imgs/Boss/cereja.png')
@@ -71,16 +68,15 @@ end
 function Boss.criaColisao()
     retangulo1 = hc.rectangle(love.graphics.getWidth()/2 - 50 + 405, love.graphics.getHeight()/2 - 155, 100, 280)
     retangulo2 = hc.rectangle(love.graphics.getWidth()/2 - 50 - 415, love.graphics.getHeight()/2 - 50, 105, 220)
-    Boss.colisao = hc.rectangle(Boss.x,Boss.y,quadros.quadros/3,quadros.quadros/3)
+    Boss.colisao = hc.rectangle(Boss.x, Boss.y, quadros.quadros / 3, quadros.quadros / 3)
 end
 
 
 function Boss.draw()
-  
   --love.graphics.setBackgroundColor(1, 1, 1)
   --love.graphics.setColor(1, 0, 0)
   lifeMob.draw(Boss.life)
-  love.graphics.setColor(1,1,1,0)
+  love.graphics.setColor(1, 1, 1 ,0)
   love.graphics.print('tempo stage 2: ' .. stage2.timer, 0, 15)
   love.graphics.print('X: ' .. Boss.x, 0, 45)
   love.graphics.print('Y: ' .. Boss.y, 0, 60)
@@ -94,7 +90,7 @@ function Boss.draw()
   love.graphics.print('Row: ' .. quadros.row, 0, 150)
   love.graphics.print('Column: ' .. quadros.column, 0, 165)
   love.graphics.print('Boss.pos: ' .. Boss.pos, 0, 180)
-  love.graphics.setColor(1,1,1,1)
+  love.graphics.setColor(1, 1, 1, 1)
   love.graphics.draw(quadros.img, Boss.quads[Boss.pos], Boss.x, Boss.y)
   --Boss.colisao:draw()
   
@@ -115,7 +111,7 @@ function Boss.getMaxVida()
   return Boss.maxVida
 end
 
-function Boss.update(dt,player)
+function Boss.update(dt, player)
 
   Boss.colisao:moveTo(Boss.x + quadros.quadros / 2, Boss.y + quadros.quadros / 2)
   Boss.animationController()
@@ -213,9 +209,10 @@ function Boss.stageOne(dt,player)
       stage1.shot.width = 200
       stage1.shot.heigth = 200
       ataque1sound:play()
-      if(Boss.collider(player.getPosX(),player.getPosY(),player.getQuadro()/2,player.getQuadro()/2, stage1.shot.x,  stage1.shot.y, stage1.shot.width, stage1.shot.heigth)) then
+      
+      if (Boss.collider(player.getPosX(),player.getPosY(),player.getQuadro()/2,player.getQuadro()/2, stage1.shot.x,  stage1.shot.y, stage1.shot.width, stage1.shot.heigth)) then
         player.lifeBar().dano(Boss.dmg)
-    end
+      end
     elseif Boss.pos == 0 then
       stage1.shot.width = 0
       stage1.shot.heigth = 0
@@ -306,8 +303,8 @@ function Boss.stageThree(dt)
     Boss.static = true
     Boss.walkright = false
     Boss.damage = false
-
   end
+  
   if stage3.timer > 5 and stage3.timer < 7 then
     Boss.throw = true
     Boss.walkleft = false
@@ -345,7 +342,6 @@ function Boss.stageThree(dt)
     Boss.static = true
     Boss.walkright = false
     Boss.damage = false
-
   end
   
   stage3.cd = stage3.cd + dt
@@ -364,7 +360,7 @@ function Boss.bossSkills(dt,player)
     if Boss.collider(love.graphics.getWidth()/2 - 50 - 415, love.graphics.getHeight()/2 - 50, 105, 220, newshots.x, newshots.y, newshots.width, newshots.heigth) then
       table.remove(stage2, i)
     end
-    if(Boss.collider(player.getPosX(),player.getPosY(),player.getQuadro()/2,player.getQuadro()/2,newshots.x, newshots.y, newshots.width, newshots.heigth)) then
+    if Boss.collider(player.getPosX(),player.getPosY(),player.getQuadro()/2,player.getQuadro()/2,newshots.x, newshots.y, newshots.width, newshots.heigth) then
         player.lifeBar().dano(Boss.dmg)
         table.remove(stage2, i)
     end
@@ -375,7 +371,7 @@ function Boss.bossSkills(dt,player)
   end
   
   for i, newshots in ipairs(stage3) do
-    if(Boss.collider(player.getPosX(),player.getPosY(),player.getQuadro()/2,player.getQuadro()/2,newshots.x, newshots.y, newshots.width, newshots.heigth)) then
+    if (Boss.collider(player.getPosX(),player.getPosY(),player.getQuadro()/2,player.getQuadro()/2,newshots.x, newshots.y, newshots.width, newshots.heigth)) then
         player.lifeBar().dano(Boss.dmg)
         table.remove(stage3, i)
     end

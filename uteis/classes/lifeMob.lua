@@ -49,7 +49,7 @@ end
 function lifeMob.updatePos(life, x, y, size)
   -- responsavel por atualizar a posição da barra de vida
   -- vida da tabela, posição x, posição y, valor, altura
-  life.x = x - life.vidaMaxima / 2 + size/2
+  life.x = x - life.vidaMaxima / 2 + size / 2
   life.y = y - 25
   life.offsetBarX = life.x - 3
   life.offsetBarY =  life.y - 3
@@ -58,7 +58,7 @@ end
 function lifeMob.dano(life, valor)
 -- calcula a vida que o mob perdeu e atualiza o tamanho da barra de vida
 -- vida da tabela, valor(dano)
-   if(life.value - valor) < 0 then
+   if (life.value - valor) < 0 then
     life.value = 0
   else
     valor = ((valor * 100) / 195)
@@ -75,7 +75,7 @@ end
 
 function lifeMob.draw(life)
   love.graphics.setColor(0,0,0,1)
-  love.graphics.rectangle("line", life.offsetBarX, life.offsetBarY, life.offsetBarValue,life.offsetBarHeight )
+  love.graphics.rectangle("line", life.offsetBarX, life.offsetBarY, life.offsetBarValue, life.offsetBarHeight )
   love.graphics.setColor(1,0,0,1)
   love.graphics.rectangle("fill", life.x, life.y, life.value, life.height)
 end
