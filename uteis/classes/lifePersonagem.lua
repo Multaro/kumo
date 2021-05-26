@@ -1,8 +1,13 @@
 img = love.graphics.newImage('uteis/imgs/player/lifebar.png')
+ataqueImg = love.graphics.newImage('uteis/imgs/player/ataqueMenuImg.png')
+skillImg = love.graphics.newImage('uteis/imgs/player/skillMenuImg.png')
 local lifePersonagem = {}
 local posDebugx = 500
 local posDebugy = 500
-
+skillPronta = true
+ataquePronto = true
+fonteWay = 'uteis/fonts/joystix/joystix.ttf'
+contador = 9
 -- Função que carrega todos os dados necessarios
 function lifePersonagem.lifePersonagemLoad()
   love.graphics.setBackgroundColor(1,1,1)
@@ -23,9 +28,47 @@ function lifePersonagem.lifePersonagemDraw(skillPronta)
   love.graphics.scale(0.5, 0.5) 
   love.graphics.draw(img,lifePersonagem.x,lifePersonagem.y)
   love.graphics.pop()
+
+  if(ataquePronto == true) then
+  love.graphics.setColor(1,1,1,0.2)
+  love.graphics.circle('fill',lifePersonagem.x + lifePersonagem.maxValue + 80,lifePersonagem.y/2 + 20,25)
+  love.graphics.draw(ataqueImg,lifePersonagem.x + lifePersonagem.maxValue + 80 - ataqueImg:getWidth()/2 , lifePersonagem.y/2 - 5)
+  else
+    love.graphics.setColor(1,0,0,1)
+    love.graphics.circle('fill',lifePersonagem.x + lifePersonagem.maxValue + 80,lifePersonagem.y/2 + 20,25)
+    love.graphics.draw(ataqueImg,lifePersonagem.x + lifePersonagem.maxValue + 80 - ataqueImg:getWidth()/2 , lifePersonagem.y/2 - 5)
+  end
+
+  if(skillPronta == true) then
+  love.graphics.setColor(1,0,0,1)
+  love.graphics.circle('fill',lifePersonagem.x + lifePersonagem.maxValue + 150,lifePersonagem.y/2 + 20,25)
+  love.graphics.draw(skillImg,lifePersonagem.x + lifePersonagem.maxValue + 150 - skillImg:getWidth()/2 , lifePersonagem.y/2 - 7)
+  else
+    love.graphics.setColor(1,1,1,0.2)
+    love.graphics.circle('fill',lifePersonagem.x + lifePersonagem.maxValue + 150,lifePersonagem.y/2 + 20,25)
+    love.graphics.draw(skillImg,lifePersonagem.x + lifePersonagem.maxValue + 150 - skillImg:getWidth()/2 , lifePersonagem.y/2 - 7)
+    fonte = love.graphics.newFont(fonteWay,18)
+    love.graphics.setFont(fonte)
+    love.graphics.setColor(10/255,10/255,10/255,1)
+    if(contador >= 10) then
+      love.graphics.print(math.floor(contador),lifePersonagem.x + lifePersonagem.maxValue + 135 ,lifePersonagem.y/2 + fonte:getHeight(math.floor(contador))/2)
+    else
+      love.graphics.print(math.floor(contador),lifePersonagem.x + lifePersonagem.maxValue + 142 ,lifePersonagem.y/2 + fonte:getHeight(math.floor(contador))/2)
+    end
+  end
   love.graphics.setColor(0,1,1,1)
+  fonte = love.graphics.newFont(fonteWay,18)
+  love.graphics.setFont(fonte)
+  love.graphics.print("D",lifePersonagem.x + lifePersonagem.maxValue + 75,lifePersonagem.y/2 -30)
+  love.graphics.print("W",lifePersonagem.x + lifePersonagem.maxValue + 145,lifePersonagem.y/2 -30)
+  
+  fonte = love.graphics.newFont(fonteWay,10)
+  love.graphics.setFont(fonte)
   if(skillPronta) then
-  love.graphics.print("Skill Pronta: Pressione W para usar",lifePersonagem.fillX,lifePersonagem.fillY + 50)
+  love.graphics.setColor(0,1,1,1)
+
+  
+  
   end
 end
 
@@ -92,6 +135,38 @@ end
 function lifePersonagem.debugPosicao(valor)
   love.graphics.print(valor,posDebugx,posDebugy)
 end
+
+function lifePersonagem.updateContador(cont)
+    if cont ~= nil then
+      contador = cont
+    end
+end
+
+
+function lifePersonagem.setSkill()
+  if(skillPronta == false) then
+  skillPronta = true
+  else
+   skillPronta = false
+  end
+end
+function lifePersonagem.setAtaque()
+  if(ataquePronto == false) then
+  ataquePronto = true
+  else
+    ataquePronto = false
+  end
+
+function lifePersonagem.getAtaquePronto()
+  return ataquePronto
+end
+
+function lifePersonagem.getSkillPronta()
+  return skillPronta
+end
+
+end
+
 
 -- return necessario para utilizar a classe lifePersonagem
 return lifePersonagem

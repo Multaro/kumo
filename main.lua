@@ -17,7 +17,7 @@ bossSoundtrack:setLooping(true)
 bossSoundtrack:setVolume(0.05)
 playerAtaqueSound = love.audio.newSource("uteis/sounds/wolfAtk.mp3", "static")
 playerAtaqueSound:setLooping(false)
-playerAtaqueSound:setVolume(0.1)
+playerAtaqueSound:setVolume(0.05)
 playerSkillSound = love.audio.newSource("uteis/sounds/wolfSkill.wav", "static")
 playerSkillSound:setLooping(false)
 playerSkillSound:setVolume(0.1)
@@ -40,7 +40,7 @@ local randomPosY
 function love.load()
  fonteWay = 'uteis/fonts/joystix/joystix.ttf'
  menu.load()
- fonte = love.graphics.newFont(fonteWay,10)
+ fonte = love.graphics.newFont(fonteWay,15)
  love.graphics.setFont(fonte)
  
  player.createPlayer(500,500,'uteis/imgs/player/player.png',128)
@@ -102,6 +102,8 @@ end
   end
   
   if(gameState == 'vitoria') then
+      bossBackgroundSound:stop()
+      bossSoundtrack:stop()
     love.graphics.setBackgroundColor(0,0,0)
     love.graphics.setColor(238/255,201/255,0/255,1)
     thisfonte = love.graphics.setNewFont(fonteWay,72)

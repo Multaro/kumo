@@ -1,6 +1,6 @@
 -- Apelidos para as funções
 local newQuad = love.graphics.newQuad
-local hc = require 'HC'
+local hc = require 'uteis/HC'
 
 -- Dados do jogador
 -- Controle e direção do jogador
@@ -286,10 +286,10 @@ function mapa.draw(gameState)
     end
 
   end
-  --[[  --]]
-  for i, quad in ipairs(quadrosIntransponiveis) do
+  --[[ for i, quad in ipairs(quadrosIntransponiveis) do
     quad:draw()
-  end
+  end --]]
+  
   
 
   if(gameState =='boss') then
