@@ -24,9 +24,9 @@ local direcao = ''
 function mapa.criaMapa()
   mapa.angle = 0 
   circulo ={}
-  circulo.x = 470
-  circulo.y = 350
-  circulo.radius = 350
+  circulo.x = 480
+  circulo.y = 370
+  circulo.radius = 300
 
   local primeiraFase = {
     -- 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30
@@ -303,7 +303,8 @@ function mapa.draw(gameState)
    love.graphics.translate(-love.graphics.getWidth() / 2, -love.graphics.getHeight() / 2)
    love.graphics.draw(faseBoss.imgPrato, 0, 0)
    love.graphics.pop()
-
+   
+  
    --love.graphics.draw(faseBoss.imgPrato,0,0, faseBoss.angle, faseBoss.imgPrato:getWidth()/2, faseBoss.imgPrato:getHeight()/2, faseBoss.imgPrato:getWidth(), faseBoss.imgPrato:getHeight())
   end
 end
