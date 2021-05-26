@@ -6,7 +6,24 @@ local stage2 = {}
 local stage3 = {}
 local retangulo1 = nil
 local retangulo2 = nil
-hc = require 'HC'
+
+ataque1sound = love.audio.newSource("uteis/sounds/BoosSoundEffect.wav", "static")
+ataque1sound:setLooping(false)
+ataque1sound:setVolume(0.1)
+
+ataque2sound = love.audio.newSource("uteis/sounds/bossAtaque2.wav", "static")
+ataque2sound:setLooping(false)
+ataque2sound:setVolume(0.1)
+
+damageSound = love.audio.newSource("uteis/sounds/bossDmg.wav", "static")
+damageSound:setLooping(false)
+damageSound:setVolume(0.5)
+
+
+
+
+
+hc = require 'uteis/HC'
 function Boss.createBoss(gameState)
 Boss.x = love.graphics.getWidth()/2 - 128
 Boss.y = love.graphics.getHeight()/2 - 128
@@ -79,7 +96,7 @@ function Boss.draw()
   love.graphics.print('Boss.pos: ' .. Boss.pos, 0, 180)
   love.graphics.setColor(1,1,1,1)
   love.graphics.draw(quadros.img, Boss.quads[Boss.pos], Boss.x, Boss.y)
-  Boss.colisao:draw()
+  --Boss.colisao:draw()
   
   for i, newshots in ipairs(stage2) do
     love.graphics.draw(newshots.img, newshots.x, newshots.y, newshots.angle, 1, 1, newshots.width, newshots.heigth)
@@ -120,7 +137,7 @@ function Boss.update(dt,player)
   elseif stage2.start then
     if  Boss.x > (0 - (quadros.quadros/15)) and  Boss.y > (0 - (quadros.quadros/15)) then
       if Boss.x > (0 - (quadros.quadros/15)) then
-        Boss.pos = 0
+        
         Boss.attack = false
         Boss.walkleft = true
         Boss.walkright = false
@@ -139,7 +156,7 @@ function Boss.update(dt,player)
   elseif stage3.start then
     if math.floor(Boss.x) ~= love.graphics.getWidth()/2 - quadros.quadros / 2 and math.floor(Boss.y) ~= love.graphics.getHeight() / 2 - quadros.quadros / 2 then
       if math.floor(Boss.x) > love.graphics.getWidth()/2 - quadros.quadros / 2 then
-        Boss.pos = 0
+        
         Boss.attack = false
         Boss.walkleft = true
         Boss.walkright = false
@@ -195,7 +212,7 @@ function Boss.stageOne(dt,player)
     if Boss.pos >= 10 then
       stage1.shot.width = 200
       stage1.shot.heigth = 200
-
+      ataque1sound:play()
       if(Boss.collider(player.getPosX(),player.getPosY(),player.getQuadro()/2,player.getQuadro()/2, stage1.shot.x,  stage1.shot.y, stage1.shot.width, stage1.shot.heigth)) then
         player.lifeBar().dano(Boss.dmg)
     end
@@ -263,6 +280,7 @@ function Boss.stageTwo(dt)
       if stage2.cd > 0.1 then
         newshots = {x = Boss.x, y = Boss.y + 100, img = imgShot, angle = 0, width = imgShot:getWidth() / 2, heigth = imgShot:getHeight() / 2}
         table.insert(stage2, newshots)
+        ataque2sound:play()
         stage2.cd = 0
       end
     elseif Boss.pos == 0 then
@@ -316,6 +334,7 @@ function Boss.stageThree(dt)
       table.insert(stage3, newshots)
       newshots = {id = 7, x = Boss.x + (quadros.quadros - imgShot:getWidth()), y = Boss.y + imgShot:getHeight(), angle = 0, width = imgShot:getWidth(), heigth = imgShot:getHeight(), img = imgShot}
       table.insert(stage3, newshots)
+      ataque2sound:play()
       stage3.cd = 0
     end
   elseif stage3.timer > 7 and Boss.pos == 0 then
@@ -439,12 +458,14 @@ end
 function Boss.dano(valor)
   
   if Boss.pos == 0 then
+    damageSound:play()
     Boss.damage = true
     Boss.throw = false
     Boss.walkleft = false
     Boss.attack = false
     Boss.static = false
     Boss.walkright = false
+    
   end
  
   -- monstro da tabela, dano

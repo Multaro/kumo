@@ -29,6 +29,7 @@ function menu.load()
   ceu = love.graphics.newImage('uteis/imgs/menu/ceu.png')
   paisagem = love.graphics.newImage('uteis/imgs/menu/paisagem.png')
   imagem = love.graphics.newImage('uteis/imgs/menu/menuMicroWave.png')
+  
   success = love.window.setMode( 960, 736 )
   sound = love.audio.newSource("uteis/sounds/microwave.wav", "static")
   music = love.audio.newSource("uteis/sounds/coisaLinda2.wav", "stream")
@@ -51,7 +52,7 @@ end
 
 function menu.draw(gameState,time,fonteWay)
   love.graphics.setBackgroundColor(1, 1, 1, 1)
-    newFont = love.graphics.newFont(fonteWay,25)
+    newFont = love.graphics.newFont(fonteWay,22) --22
     love.graphics.setFont(newFont)
   if(gameState == 'intro') then
     if play then
@@ -62,15 +63,17 @@ function menu.draw(gameState,time,fonteWay)
     end
     love.graphics.setColor(1, 1, 1, opacity)
     love.graphics.draw(imagem, 0, 0)
+    
+   
         
     if(math.ceil(time)>=10) then
       love.graphics.setColor(0, 0, 0, opacity)
-      love.graphics.print("00:00", 810, 180)
+      love.graphics.print("00:00", 820, 180)
       love.graphics.setColor(1, 1, 1, opacity)
   
     else
       love.graphics.setColor(0, 0, 0, opacity)
-      love.graphics.print("00:0"..math.ceil(time), 810, 180)
+      love.graphics.print("00:0"..math.ceil(time), 820, 180)
       love.graphics.setColor(1,1,1,opacity)
     
     end
@@ -86,8 +89,9 @@ function menu.draw(gameState,time,fonteWay)
       love.graphics.rectangle('fill', 95, 190, 610, 355)
       love.graphics.setColor(1, 1, 1, 1)
       love.graphics.draw(imagem, 0, 0)
+  
       love.graphics.setColor(0, 0, 0, opacity)
-      love.graphics.print("00:0" .. math.ceil(time), 810, 180)
+      love.graphics.print("00:0" .. math.ceil(time), 820, 180)
       love.graphics.setColor(1, 1, 1, opacity)
     else
       love.graphics.setColor(1, 1, 1, 1)
@@ -101,12 +105,22 @@ function menu.draw(gameState,time,fonteWay)
       love.graphics.pop()
       love.graphics.draw(personagem.personImg,personagem[personagem.pos], (love.graphics.getWidth()/2 - quadro),(love.graphics.getHeight()/2 + quadro/2))
       love.graphics.draw(imagem,0,0)
-     
+      
       love.graphics.setColor(0,0,0,opacity)
-      love.graphics.print("00:0"..math.ceil(time),810,180)
+      love.graphics.print("00:0"..math.ceil(time),820,180)
       love.graphics.setColor(0,1,0,opacity)
       love.graphics.print("Press any button to Play",150,550)
       love.graphics.setColor(1,1,1,opacity)
+
+
+      -- Tutorial
+      newFont = love.graphics.newFont(fonteWay,15) 
+      love.graphics.setFont(newFont)
+      love.graphics.print("D - Ataque",760,350)
+      love.graphics.print("W - Especial",760,370)
+      love.graphics.print("Setas - Mover",760,390)
+
+
     end
   end
   fonte = love.graphics.newFont(fonteWay,10)

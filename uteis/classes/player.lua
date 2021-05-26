@@ -1,6 +1,6 @@
 local Q = love.graphics.newQuad
 local k = love.keyboard.isDown
-local hc = require 'HC'
+local hc = require 'uteis/HC'
 local mapa = require("uteis.classes.mapa")
 local Boss = require("uteis.classes.Boss")
 local monster = require("uteis.classes.monster")
@@ -9,9 +9,12 @@ local maxPosAtaque = 6
 local maxPosicaoCorrida = 8
 local player = {}
 local skill = {}
+local podeAtacarPlayer = true
 
 
 function player.createPlayer(posX,posY,img,quadro)
+ 
+  player.ataqueCd = 0
   player.posX = posX
   player.posY = posY
   player.pontos = 0
@@ -62,6 +65,7 @@ function player.createPlayer(posX,posY,img,quadro)
   skill.imgAtaque = false
   skill.imgGarra = love.graphics.newImage('uteis/imgs/player/playerSkillEfect3.png')
   lifePersonagem.lifePersonagemLoad()
+  player.lifeBar().setAtaque()
   local y = 0
 
   for x = 0, (player.qtdQuadrosX - 1) do
@@ -165,6 +169,8 @@ function player.getColisaoWidth()
   return player.getQuadro()/2
 end
 
+
+
 function player.draw()
 
     -- love.graphics.print(player.getPosX(),10,40)
@@ -226,6 +232,7 @@ function player.ataque(monstro)
   if(player.status == 'caminhando') then
     if((monster.getPosX(monstro) < player.posX + player.quadro) and (monster.getPosX(monstro) + monster.getQuadro(monstro) > player.posX) and (monster.getPosY(monstro) < player.posY + player.quadro) and (monster.getPosY(monstro) + monster.getQuadro(monstro) > player.posY)) then
       player.posicaoAtaque()
+      
       return true
     else 
       player.posicaoAtaque()
@@ -316,12 +323,16 @@ function player.colisaoBorda(direcao)
 end
 
 function player.atualizaQuadros(dt)
+  if(player.status == 'caminhando' and k('d') and podeAtacarPlayer) then
+    player.lifeBar().setAtaque()
+    podeAtacarPlayer = false
+  end
   if(player.status == 'atacando') then
     player.sleepTimePos = player.sleepTimePos + dt * 3
     if(player.sleepTimePos > 0.2) then
       player.pos = player.pos + 1
-      if(player.pos ==  player.posMax + 1) then
-        player.pos = 1
+      if(player.pos ==  player.posMax) then
+        player.pos = 1   
         if(player.direcao == 'atqUp') then
           player.direcao = 'up'
         end
@@ -333,21 +344,19 @@ function player.atualizaQuadros(dt)
         end
         if(player.direcao == 'atqRight') then
           player.direcao = 'right'
-        end
+        end    
+        player.lifeBar().setAtaque()
+        podeAtacarPlayer = true
         player.status = 'caminhando'
       end
       player.sleepTimePos = 0
+      
     end
+
   end
 end
 
-function player.podeAtacar()
-  if(player.status == 'atacando') then
-    return false
-  else
-    return true
-  end
-end
+
 
 function player.usandoSkill()
   if(skill.ativo == false) then
@@ -401,6 +410,7 @@ end
 
 function player.skillPronta() 
   if(skill.cd == 0) then
+    player.lifeBar().setSkill()
     return true
   else
     return false
@@ -408,6 +418,7 @@ function player.skillPronta()
 end
 
 function player.update(medidaMoviemento, dt, mapa,gameState)
+  player.lifeBar().updateContador(skill.cd + 1)
   player.hitBox:moveTo(player.getPosX() + player.getColisaoWidth(),player.getPosY()+player.getColisaoWidth())
 
   for i,quadrado in pairs(hc.collisions(player.hitBox)) do
@@ -428,6 +439,7 @@ function player.update(medidaMoviemento, dt, mapa,gameState)
   player.atualizaQuadros(dt)
 
   if(player.usandoSkill() == false) then
+    player.lifeBar().setSkill()
     lifePersonagem.mortal()
   end     
 end
@@ -435,32 +447,32 @@ end
 function player.moveJogador(dt)
   angle = mapa.updateAngle(player)
   if angle >= -45 and angle < 0 then 
+    player.setPosY(player.getPosY() - 50 * dt)
+  end
+  if angle >= -90 and angle < -45 then 
+    player.setPosX(player.getPosX() - 50 * dt )
+    player.setPosY(player.getPosY() - 50 * dt)
+  end
+  if angle >= -135 and angle < -90 then 
+    player.setPosX(player.getPosX() - 50 * dt)
+    player.setPosY(player.getPosY() + 50 * dt)
+  end
+  if angle <= 180 and angle < -135 then 
+    player.setPosY(player.getPosY() + 50 * dt)
+  end
+  if angle <= 180 and angle > 135 then 
+    player.setPosY(player.getPosY() + 50 * dt)
+  end
+  if angle <= 135 and angle > 90 then 
     player.setPosX(player.getPosX() + 50 * dt)
     player.setPosY(player.getPosY() + 50 * dt)
   end
-  if angle >= -90 and angle < -45 then 
-    player.setPosX(player.getPosX() + math.pi * dt)
-    player.setPosY(player.getPosY() + 50 * dt)
-  end
-  if angle >= -135 and angle < -90 then 
-    player.setPosX(player.getPosX() + math.pi * dt)
-    player.setPosY(player.getPosY() - 50 * dt)
-  end
-  if angle <= 180 and angle < -135 then 
-    player.setPosX(player.getPosX() + math.pi * dt)
-    player.setPosY(player.getPosY() - 50 * dt)
-  end
-  if angle <= 180 and angle > 90 then 
-    player.setPosX(player.getPosX() - math.pi * dt)
-    player.setPosY(player.getPosY()- 50 * dt)
-  end
   if angle <= 90 and angle > 45 then 
-    player.setPosX(player.getPosX() - 50 * dt)
-    player.setPosY(player.getPosY() + math.pi * dt)
+    player.setPosX(player.getPosX() + 50 * dt)
+    player.setPosY(player.getPosY() - 50 * dt)
   end
   if angle <= 45 and angle > 0 then 
-    player.setPosX(player.getPosX() - math.pi * dt)
-    player.setPosY(player.getPosY() + 50 * dt)
+    player.setPosY(player.getPosY() - 50 * dt)
   end
 end
 
