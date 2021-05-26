@@ -1,5 +1,5 @@
 local lifeMob = require("uteis.classes.lifeMob")
-local hc = require 'HC'
+local hc = require 'uteis/HC'
 local id = 0
 local item = require("uteis.classes.itens") -- Import itens
 local monster = {}
@@ -111,10 +111,10 @@ function monster.createMonster(mob,nome,img,quadro,posX,posY,atq,vida)
   function monster.draw(mob,fonte,dt)
     
   -- monster.draw(mob da tabela,fonte para o nome do monstro)  
-    nomeSizeX = fonte:getWidth(mob.nome) - mob.quadro
-    nomeSizeX = mob.posX - (nomeSizeX / 2)
+    nomeSizeX = fonte:getWidth(mob.nome) - mob.quadro * 2
+    nomeSizeX = mob.posX - (nomeSizeX/6)
     lifeMob.draw(mob.life)
-    love.graphics.setColor(2/255,218/255,125/255,1)
+    love.graphics.setColor(6/255,6/255,76/255,1)
     nomePosY = lifeMob.getPosY(mob.life) - fonte:getHeight(mob.nome)
     love.graphics.print(mob.nome,nomeSizeX,nomePosY)
     lifeMob.updatePos(mob.life,mob.posX,mob.posY,mob.quadro)
