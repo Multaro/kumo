@@ -58,9 +58,6 @@ function monster.createMonster(mob,nome,img,quadro,posX,posY,atq,vida)
     lifeMob.createLife(mob.life,posX,posY,vida,mob.img:getWidth())
     monster.setVisao(mob)
 
-
-
-         
         local y = 0
         for x = 0, (mob.qtdQuadrosX - 2) do
           mob.Quadros['down'][x+1] = Q((x * mob.quadro), (y * mob.quadro),mob.quadro,mob.quadro,mob.img:getWidth(),mob.img:getHeight())
@@ -94,19 +91,8 @@ function monster.createMonster(mob,nome,img,quadro,posX,posY,atq,vida)
           mob.Quadros['atqUp'][x+1] = Q((x * mob.quadro), (y * mob.quadro),mob.quadro,mob.quadro,mob.img:getWidth(),mob.img:getHeight())
         end
 
-
-
-         
-  
-
-
     return mob
   end
-
-
-
-
-
   
   function monster.draw(mob,fonte,dt)
     
@@ -123,12 +109,7 @@ function monster.createMonster(mob,nome,img,quadro,posX,posY,atq,vida)
       item.Draw(itensDropados,1,dt) 
     end
     
-                love.graphics.draw(mob.img,mob.Quadros[mob.direcao][mob.pos],mob.posX,(mob.posY))
-
-
-
-  
-
+    love.graphics.draw(mob.img,mob.Quadros[mob.direcao][mob.pos],mob.posX,(mob.posY))
   end
 
   function monster.getColisaoX(mob) 
@@ -534,13 +515,7 @@ function monster.update(monstros,player,medidaMoviemento,dt,podeAtacar,lifePerso
       end
     end
   end
-  
 end
-     
-      
-
-
-
 
 function monster.getDrops()
   return mob.drops

@@ -6,6 +6,7 @@ local stage2 = {}
 local stage3 = {}
 local retangulo1 = nil
 local retangulo2 = nil
+local Q = love.graphics.newQuad
 
 ataque1sound = love.audio.newSource("uteis/sounds/BoosSoundEffect.wav", "static")
 ataque1sound:setLooping(false)
@@ -19,29 +20,32 @@ damageSound = love.audio.newSource("uteis/sounds/bossDmg.wav", "static")
 damageSound:setLooping(false)
 damageSound:setVolume(0.5)
 
-
-
-
-
 hc = require 'uteis/HC'
+anim8 = require 'uteis/anim8'
+
 function Boss.createBoss(gameState)
+
 Boss.x = love.graphics.getWidth()/2 - 128
 Boss.y = love.graphics.getHeight()/2 - 128
-Boss.pos = 0
-Boss.cont = 0
-Boss.quads = {}
-Boss.walkleft = false
-Boss.walkright = false
-Boss.attack = false
-Boss.static = true
-Boss.throw = false
-Boss.damage = false
+
+Boss.img = love.graphics.newImage('uteis/imgs/Boss/BossImage.png')
+Boss.damageTimer = 0
 
 quadros.quadros = 256
-quadros.timer = 0
-quadros.row = 0
-quadros.column = 0
 Boss.colisao = nil
+
+Boss.frameTimer = 0.146
+Boss.animationController = 'static'
+Boss.animationControll = anim8.newGrid(quadros.quadros, quadros.quadros, Boss.img:getWidth(), Boss.img:getHeight())
+Boss.animation = {}
+Boss.animation['walkleft'] = anim8.newAnimation(Boss.animationControll('1-7', 4), Boss.frameTimer)
+Boss.animation['walkright'] = anim8.newAnimation(Boss.animationControll('1-7', 5), Boss.frameTimer)
+Boss.animation['attack'] = anim8.newAnimation(Boss.animationControll('1-12', 1), Boss.frameTimer)
+Boss.animation['static'] = anim8.newAnimation(Boss.animationControll('1-6', 3), Boss.frameTimer)
+Boss.animation['throw'] = anim8.newAnimation(Boss.animationControll('1-10', 2), Boss.frameTimer)
+Boss.animation['damage'] = anim8.newAnimation(Boss.animationControll('1-3', 6), Boss.frameTimer)
+Boss.frameTimerAttack = 0
+Boss.frameTimerthrow = 0
 
 stage1.start = false
 stage1.timer = 0
@@ -55,13 +59,14 @@ stage2.speed = 1
 
 stage3.start = false
 stage3.timer = 0
+stage3.throwQnt = 0
 stage3.cd = 0
 
 Boss.life = {}
 Boss.vida = 900
 Boss.maxVida = 900
 Boss.dmg = 50
-Boss.animationController()
+
 lifeMob.createLifeBoss(Boss.life, 20, 20, Boss.vida)
 
   love.graphics.setBackgroundColor(1, 1, 1)
@@ -88,14 +93,16 @@ function Boss.draw()
   love.graphics.print('tempo stage 3: ' .. stage3.timer, 0, 30)
   love.graphics.print('valor necessario x: ' .. 0 - (quadros.quadros/15), 0, 75)
   love.graphics.print('valor necessario y: ' .. 0 - (quadros.quadros/15), 0, 90)
-  love.graphics.print('quadros.timer: ' .. quadros.timer, 0, 105)
   love.graphics.print('FPS: ' .. love.timer.getFPS(), 0, 120)
-  love.graphics.print('Cont: ' .. Boss.cont, 0, 135)
-  love.graphics.print('Row: ' .. quadros.row, 0, 150)
-  love.graphics.print('Column: ' .. quadros.column, 0, 165)
-  love.graphics.print('Boss.pos: ' .. Boss.pos, 0, 180)
   love.graphics.setColor(1,1,1,1)
-  love.graphics.draw(quadros.img, Boss.quads[Boss.pos], Boss.x, Boss.y)
+
+  if Boss.animationController == 'walkleft' then Boss.animation['walkleft']:draw(Boss.img, Boss.x, Boss.y, 0, 1, 1, 0, 0)
+  elseif Boss.animationController == 'walkright' then Boss.animation['walkright']:draw(Boss.img, Boss.x, Boss.y, 0, 1, 1, 0, 0)
+  elseif Boss.animationController == 'attack' then Boss.animation['attack']:draw(Boss.img, Boss.x, Boss.y, 0, 1, 1, 0, 0)
+  elseif Boss.animationController == 'static' then Boss.animation['static']:draw(Boss.img, Boss.x, Boss.y, 0, 1, 1, 0, 0)
+  elseif Boss.animationController == 'throw' then Boss.animation['throw']:draw(Boss.img, Boss.x, Boss.y, 0, 1, 1, 0, 0)
+  elseif Boss.animationController == 'damage' then Boss.animation['damage']:draw(Boss.img, Boss.x, Boss.y, 0, 1, 1, 0, 0) end
+
   --Boss.colisao:draw()
   
   for i, newshots in ipairs(stage2) do
@@ -103,7 +110,7 @@ function Boss.draw()
   end
   
   for i, newshots in ipairs(stage3) do
-    love.graphics.draw(newshots.img, newshots.x, newshots.y, newshots.angle, 1, 1, newshots.width, newshots.heigth)
+    love.graphics.draw(newshots.img, newshots.x, newshots.y, newshots.angle, 1, 1, newshots.width + 10, newshots.heigth)
   end
 end
 
@@ -118,18 +125,21 @@ end
 function Boss.update(dt,player)
 
   Boss.colisao:moveTo(Boss.x + quadros.quadros / 2, Boss.y + quadros.quadros / 2)
-  Boss.animationController()
-  Boss.bossSkills(dt,player)
+  Boss.bossSkills(dt, player)
 
-  quadros.timer = quadros.timer + dt
-  if quadros.timer > 0.15 then
-    Boss.pos = Boss.pos + 1
-    if Boss.pos == Boss.cont then
-      Boss.pos = 0
-    end
-    quadros.timer = 0
+  if Boss.animationController == 'walkleft' then 
+    Boss.animation['walkleft']:update(dt)
+  elseif Boss.animationController == 'walkright' then
+    Boss.animation['walkright']:update(dt)
+  elseif Boss.animationController == 'attack' then
+    Boss.animation['attack']:update(dt)
+  elseif Boss.animationController == 'static' then
+    Boss.animation['static']:update(dt)
+  elseif Boss.animationController == 'throw' then
+    Boss.animation['throw']:update(dt)
+  elseif Boss.animationController == 'damage' then
+    Boss.animation['damage']:update(dt)
   end
-  
   
   if stage1.start then
     Boss.stageOne(dt,player)
@@ -137,17 +147,11 @@ function Boss.update(dt,player)
   elseif stage2.start then
     if  Boss.x > (0 - (quadros.quadros/15)) and  Boss.y > (0 - (quadros.quadros/15)) then
       if Boss.x > (0 - (quadros.quadros/15)) then
-        
-        Boss.attack = false
-        Boss.walkleft = true
-        Boss.walkright = false
-        Boss.static = false
-        Boss.throw = false
-        Boss.damage = false
+        Boss.animationController = 'walkleft'
         Boss.x = Boss.x - 150 * dt
       end
       if Boss.y > (0 - (quadros.quadros/15)) then
-        Boss.y = Boss.y - 100 * dt
+        Boss.y = Boss.y - 110 * dt
       end
     else
       Boss.stageTwo(dt)
@@ -156,13 +160,9 @@ function Boss.update(dt,player)
   elseif stage3.start then
     if math.floor(Boss.x) ~= love.graphics.getWidth()/2 - quadros.quadros / 2 and math.floor(Boss.y) ~= love.graphics.getHeight() / 2 - quadros.quadros / 2 then
       if math.floor(Boss.x) > love.graphics.getWidth()/2 - quadros.quadros / 2 then
-        
-        Boss.attack = false
-        Boss.walkleft = true
-        Boss.walkright = false
-        Boss.static = false
-        Boss.throw = false
-        Boss.damage = false
+        if Boss.x < love.graphics.getWidth() / 2 - quadros.quadros / 2 then
+          Boss.animationController = 'walkright'
+        else Boss.animationController = 'walkleft' end
         Boss.x = Boss.x - 201 * dt
       else
         Boss.x = Boss.x + 201 * dt
@@ -200,32 +200,23 @@ end
 
 function Boss.stageOne(dt,player)
   stage1.timer = stage1.timer + dt
-  
   if stage1.timer > 3 then
-    Boss.attack = true
-    Boss.walkleft = false
-    Boss.walkright = false
-    Boss.static = false
-    Boss.throw = false
-    Boss.damage = false
+    Boss.animationController = 'attack'
+    Boss.frameTimerAttack = Boss.frameTimerAttack + dt
 
-    if Boss.pos >= 10 then
+    if Boss.frameTimerAttack >= Boss.frameTimer * 10 and Boss.frameTimerAttack < Boss.frameTimer * 12 then
       stage1.shot.width = 200
       stage1.shot.heigth = 200
       ataque1sound:play()
       if(Boss.collider(player.getPosX(),player.getPosY(),player.getQuadro()/2,player.getQuadro()/2, stage1.shot.x,  stage1.shot.y, stage1.shot.width, stage1.shot.heigth)) then
         player.lifeBar().dano(Boss.dmg)
-    end
-    elseif Boss.pos == 0 then
+      end
+    elseif Boss.frameTimerAttack >= Boss.frameTimer * 12 then
+      Boss.animation['attack']:gotoFrame(1)
       stage1.shot.width = 0
       stage1.shot.heigth = 0
-      
-      Boss.walkleft = false
-      Boss.walkright = false
-      Boss.throw = false
-      Boss.static = true
-      Boss.attack = false
-      Boss.damage = false
+      Boss.frameTimerAttack = 0
+      Boss.animationController = 'static'
 
       stage1.timer = 0
     end
@@ -238,16 +229,8 @@ function Boss.stageTwo(dt)
     if Boss.x > love.graphics.getWidth() - quadros.quadros then
       stage2.mov = false
     end
-
-    if Boss.pos == 0 then
-      Boss.throw = false
-      Boss.walkleft = false
-      Boss.attack = false
-      Boss.static = false
-      Boss.walkright = true
-      Boss.damage = false
-    end
-
+    
+    Boss.animationController = 'walkright'
     Boss.x = Boss.x + stage2.speed
   end
   if stage2.mov == false then
@@ -255,42 +238,26 @@ function Boss.stageTwo(dt)
       stage2.mov = true
     end
 
-    if Boss.pos == 0 then
-      Boss.throw = false
-      Boss.walkleft = true
-      Boss.static = false
-      Boss.attack = false
-      Boss.walkright = false
-      Boss.damage = false
-    end
-
+    Boss.animationController = 'walkleft'
     Boss.x = Boss.x - stage2.speed
   end
   stage2.speed = stage2.speed + 0.008
 
   if stage2.timer > 2 then
-    Boss.throw = true
-    Boss.walkleft = false
-    Boss.static = false
-    Boss.attack = false
-    Boss.walkright = false
-    Boss.damage = false
+    Boss.animationController = 'throw'
+    Boss.frameTimerthrow = Boss.frameTimerthrow + dt
 
-    if Boss.pos == 9 then
+    if Boss.frameTimerthrow >= Boss.frameTimer * 9 and Boss.frameTimerthrow < Boss.frameTimer * 10 then
       if stage2.cd > 0.1 then
         newshots = {x = Boss.x, y = Boss.y + 100, img = imgShot, angle = 0, width = imgShot:getWidth() / 2, heigth = imgShot:getHeight() / 2}
         table.insert(stage2, newshots)
         ataque2sound:play()
         stage2.cd = 0
       end
-    elseif Boss.pos == 0 then
-      Boss.walkleft = true
-      Boss.attack = false
-      Boss.static = false
-      Boss.throw = false
-      Boss.walkright = false
-      Boss.damage = false
-
+    elseif Boss.frameTimerthrow >= Boss.frameTimer * 10 then
+      Boss.animation['throw']:gotoFrame(1)
+      Boss.frameTimerthrow = 0
+      Boss.animationController = 'walkleft'
       stage2.timer = 0
     end
   end
@@ -299,24 +266,13 @@ function Boss.stageTwo(dt)
 end
 
 function Boss.stageThree(dt)
-  if Boss.pos == 0 then
-    Boss.throw = false
-    Boss.walkleft = false
-    Boss.attack = false
-    Boss.static = true
-    Boss.walkright = false
-    Boss.damage = false
+  Boss.animationController = 'static'
+  
+  if stage3.timer > 5 then
+    Boss.animationController = 'throw'
+    Boss.frameTimerthrow = Boss.frameTimerthrow + dt
 
-  end
-  if stage3.timer > 5 and stage3.timer < 7 then
-    Boss.throw = true
-    Boss.walkleft = false
-    Boss.attack = false
-    Boss.static = false
-    Boss.walkright = false
-    Boss.damage = false
-
-    if stage3.cd > 0.5 then
+    if stage3.cd > 0.5 and Boss.frameTimerthrow >= Boss.frameTimer * 9 then
       newshots = {id = 0, x = Boss.x + (quadros.quadros - imgShot:getWidth()), y = Boss.y + quadros.quadros / 2, angle = 0, width = imgShot:getWidth(), heigth = imgShot:getHeight(), img = imgShot}
       table.insert(stage3, newshots)
       
@@ -336,16 +292,15 @@ function Boss.stageThree(dt)
       table.insert(stage3, newshots)
       ataque2sound:play()
       stage3.cd = 0
+      stage3.throwQnt = stage3.throwQnt + 1
+      if stage3.throwQnt >= 10 then
+        stage3.timer = 0
+        Boss.animation['throw']:gotoFrame(1)
+        Boss.animationController = 'static'
+        Boss.frameTimerthrow = 0
+        stage3.throwQnt = 0
+      end
     end
-  elseif stage3.timer > 7 and Boss.pos == 0 then
-    stage3.timer = 0
-    Boss.throw = false
-    Boss.walkleft = false
-    Boss.attack = false
-    Boss.static = true
-    Boss.walkright = false
-    Boss.damage = false
-
   end
   
   stage3.cd = stage3.cd + dt
@@ -369,7 +324,7 @@ function Boss.bossSkills(dt,player)
         table.remove(stage2, i)
     end
     -- /Teste de pilar
-    if newshots.y > love.graphics.getHeight() + imgShot:getWidth() then -- tamanho do tiro
+    if newshots.y > love.graphics.getHeight() + imgShot:getWidth() then
       table.remove(stage2, i)
     end
   end
@@ -413,58 +368,17 @@ function Boss.bossSkills(dt,player)
   end
 end
 
-function Boss.geraAnimacao(y, x, maxY, maxX, img)
-  quadros.x = x
-  quadros.y = y
-  quadros.img = love.graphics.newImage(img)
-  quadros.row = 0
-  quadros.column = 0
-  Boss.cont = 0
-  
-  for i = 0, quadros.y - 1 do
-    quadros.row = i
-    for l = 0, quadros.x - 1 do
-      if l == maxX and i == maxY then
-        break
-      else
-        Boss.quads[Boss.cont] = love.graphics.newQuad(l * quadros.quadros, i * quadros.quadros, quadros.quadros, quadros.quadros, quadros.img:getWidth(), quadros.img:getHeight())
-      Boss.cont = Boss.cont + 1
-      quadros.column = l
-      end
-    end
-  end
-end
-
-function Boss.animationController()
-  if Boss.walkleft == true and Boss.attack == false and Boss.throw == false and Boss.walkright == false and Boss.static == false then
-    Boss.geraAnimacao(3, 3, 2, 1, 'uteis/imgs/Boss/bolo_walk_left.png')
-  elseif Boss.walkleft == false and Boss.attack == false and Boss.throw == false and Boss.walkright == true and Boss.static == false then
-    Boss.geraAnimacao(3, 3, 2, 1, 'uteis/imgs/Boss/bolo_walk_right.png')
-  elseif Boss.throw == true and Boss.attack == false and Boss.walkleft == false and Boss.walkright == false and Boss.static == false then
-    Boss.geraAnimacao(4, 3, 3, 1, 'uteis/imgs/Boss/bolo_atk_uma_cereja.png')
-  elseif Boss.static == true and Boss.throw == false and Boss.attack == false and Boss.walkleft == false and Boss.walkright == false then
-    Boss.geraAnimacao(3, 2, 3, 2, 'uteis/imgs/Boss/bolo_static.png')
-  elseif Boss.attack == true and Boss.static == false and Boss.throw == false and Boss.walkleft == false and Boss.walkright == false then
-    Boss.geraAnimacao(4, 3, 4, 3, 'uteis/imgs/Boss/bolo_atk_area.png')
-  elseif Boss.damage == true and Boss.attack == false and Boss.static == false and Boss.throw == false and Boss.walkleft == false and Boss.walkright == false then
-    Boss.geraAnimacao(1, 3, 2, 4, 'uteis/imgs/Boss/bolo_chorando.png')
-  end
-end
-
 function Boss.collider(x1, y1, w1, h1, x2, y2, w2, h2)
   return x2 + w2 >= x1 and y2 + h2 >= y1 and x2 <= x1 + w1 and y2 <= y1 + h1
 end
 
 function Boss.dano(valor)
   
-  if Boss.pos == 0 then
+  if stage1.start or stage3.start and Boss.damageTimer > 5 then
     damageSound:play()
-    Boss.damage = true
-    Boss.throw = false
-    Boss.walkleft = false
-    Boss.attack = false
-    Boss.static = false
-    Boss.walkright = false
+    Boss.animationController = 'damage'
+    Boss.animation['throw']:gotoFrame(3)
+    Boss.damageTimer = 0
     
   end
  

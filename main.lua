@@ -130,7 +130,7 @@ end
   if(gameState == "game" or gameState == 'boss') then
     if(gameState == "game") then        
     -- Movimenta os Monstros e controla a visão/ataque dos mesmos assim como drop de itens
-      if(player.getPontos() >= 50) then
+      if(player.getPontos() >= 10) then
         bossIntroSound:play()
         mapa.trocaFase() 
         Boss.criaColisao()

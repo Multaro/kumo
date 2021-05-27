@@ -454,8 +454,8 @@ function player.moveJogador(dt)
     player.setPosY(player.getPosY() - 50 * dt)
   end
   if angle >= -135 and angle < -90 then 
-    player.setPosX(player.getPosX() - 50 * dt)
-    player.setPosY(player.getPosY() + 50 * dt)
+    player.setPosX(player.getPosX() + 50 * dt)
+    player.setPosY(player.getPosY() - 50 * dt)
   end
   if angle <= 180 and angle < -135 then 
     player.setPosY(player.getPosY() + 50 * dt)

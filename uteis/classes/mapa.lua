@@ -57,25 +57,25 @@ function mapa.criaMapa()
 
   local detailColisions = {
     -- 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30
-      {10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 15, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 1
-      {11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 14, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 2
+      {10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 15, 18, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 1
+      {11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 14, 19, 0, 0, 0, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 2
       {10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0}, -- 3
       {12, 13, 12, 13, 12, 13, 12, 13, 12, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 0, 0, 0, 0}, -- 4
-      {0, 0, 0, 0, 24, 0, 17, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 16, 0, 0, 0}, -- 5
-      {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 6
-      {0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0}, -- 7
-      {0, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 0, 0, 0, 0, 0, 3, 4, 0, 0, 0, 0}, -- 8
-      {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 9
+      {35, 0, 0, 0, 24, 0, 17, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 16, 0, 0, 0}, -- 5
+      {36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 6
+      {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 7
+      {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 8
+      {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 9
       {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18}, -- 10
       {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19}, -- 11
       {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 12
       {33, 33, 33, 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 9, 9, 9, 9, 9, 9, 9, 9}, -- 13
       {34, 34, 34, 30, 0, 0, 0, 0, 0, 0, 0, 0, 20, 21, 0, 0, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, 0, 0}, -- 14
-      {34, 34, 34, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 15
-      {34, 34, 34, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0}, -- 16
-      {34, 34, 34, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 0, 0, 0}, -- 17
+      {34, 34, 34, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0}, -- 15
+      {34, 34, 34, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 0, 0, 0}, -- 16
+      {34, 34, 34, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 17
       {34, 34, 34, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 18
-      {32, 32, 32, 31, 20, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 21, 0, 0, 0, 0, 0, 0, 0, 20, 21, 0}, -- 19
+      {32, 32, 32, 31, 20, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 19
       {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26, 0, 0, 0, 0, 0, 0, 0, 0}, -- 20
       {12, 13, 12, 13, 12, 13, 12, 13, 12, 13, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 9, 9, 9, 9, 9, 9, 9, 9}, -- 21
       {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 0, 0, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 22
@@ -86,11 +86,11 @@ function mapa.criaMapa()
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 11, 13, 0, 0, 0, 0, 0, 0, 0, 0}, -- 1
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 7, 0, 0, 9, 11, 13, 0, 0, 0, 0, 0, 21, 0, 0}, -- 2
     {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 2, 9, 11, 13, 0, 0, 1, 0, 0, 0, 0, 0}, -- 3
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1, 0, 0, 9, 11, 13, 6, 0, 0, 0, 6, 0, 0, 0}, -- 4
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 1, 0, 0, 0, 0, 0, 9, 11, 13, 0, 0, 0, 2, 0, 0, 21, 0}, -- 5
+    {0, 0, 0, 3, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1, 0, 0, 9, 11, 13, 6, 0, 0, 0, 6, 0, 0, 0}, -- 4
+    {0, 0, 4, 0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 1, 0, 0, 0, 0, 0, 9, 11, 13, 0, 0, 0, 2, 0, 0, 21, 0}, -- 5
     {0, 2, 0, 0, 20, 0, 0, 0, 0, 3, 0, 0, 7, 0, 0, 0, 3, 0, 0, 9, 11, 13, 0, 22, 0, 0, 0, 0, 0, 0}, -- 6
-    {0, 0, 0, 7, 0, 0, 0, 22, 0, 0, 4, 0, 0, 0, 2, 0, 0, 0, 0, 9, 11, 13, 0, 0, 0, 0, 4, 0, 0, 0}, -- 7
-    {0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 9, 11, 13, 0, 0, 3, 0, 0, 0, 0, 0}, -- 8
+    {7, 0, 0, 7, 0, 0, 0, 22, 0, 0, 4, 0, 0, 0, 2, 0, 0, 0, 0, 9, 11, 13, 0, 0, 7, 0, 4, 0, 1, 0}, -- 7
+    {0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 9, 11, 13, 0, 6, 3, 0, 0, 2, 0, 0}, -- 8
     {0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 2, 0, 0, 0, 7, 0, 0, 9, 11, 13, 0, 0, 0, 0, 0, 0, 0, 0}, -- 9
     {10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 10, 10, 10, 10, 10, 10, 10, 10}, -- 10
     {11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11}, -- 11
@@ -122,13 +122,13 @@ function mapa.criaMapa()
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 11
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 12
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 13
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 14
-    {8, 8, 8, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 15
-    {9, 9, 9, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 16
-    {10, 10, 10, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 17
-    {0, 0, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0, 3, 4, 0}, -- 18
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 19
-    {1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 20
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 11, 13, 12, 14, 13, 15, 12}, -- 14
+    {8, 8, 8, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 14, 16, 0, 12, 17, 16, 14}, -- 15
+    {9, 9, 9, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 17, 13, 0, 15, 13, 12, 17}, -- 16
+    {10, 10, 10, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 15, 17, 16, 11, 17, 14, 18}, -- 17
+    {0, 0, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 0, 0, 18, 18, 11, 13, 12, 15, 12, 16}, -- 18
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 15, 14, 18, 13, 14, 16, 18}, -- 19
+    {1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 16, 15, 14, 15, 14, 12}, -- 20
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 21
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, -- 22
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} -- 23
@@ -198,6 +198,8 @@ function mapa.criaMapa()
   quadrosDetailColision[32] = newQuad(6 * tamanhoQuadroMapa, 2 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.water:getWidth(), mapa.water:getHeight())
   quadrosDetailColision[33] = newQuad(6 * tamanhoQuadroMapa, 0 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.water:getWidth(), mapa.water:getHeight())
   quadrosDetailColision[34] = newQuad(6 * tamanhoQuadroMapa, 1 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.water:getWidth(), mapa.water:getHeight())
+  quadrosDetailColision[35] = newQuad(4 * tamanhoQuadroMapa, 113 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.img:getWidth(), mapa.img:getHeight())
+  quadrosDetailColision[36] = newQuad(4 * tamanhoQuadroMapa, 114 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa,mapa.img:getWidth(), mapa.img:getHeight())
 
   quadrosDetails[1] = newQuad(0 * tamanhoQuadroMapa, 6 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.img:getWidth(), mapa.img:getHeight())
   quadrosDetails[2] = newQuad(1 * tamanhoQuadroMapa, 6 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.img:getWidth(), mapa.img:getHeight())
@@ -232,6 +234,17 @@ function mapa.criaMapa()
   quadrosSob[8] = newQuad(1 * tamanhoQuadroMapa, 33 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.img:getWidth(), mapa.img:getHeight())
   quadrosSob[9] = newQuad(1 * tamanhoQuadroMapa, 34 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.img:getWidth(), mapa.img:getHeight())
   quadrosSob[10] = newQuad(1 * tamanhoQuadroMapa, 35 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.img:getWidth(), mapa.img:getHeight())
+  quadrosSob[11] = newQuad(4 * tamanhoQuadroMapa, 19 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.img:getWidth(), mapa.img:getHeight())
+  
+  quadrosSob[12] = newQuad(6 * tamanhoQuadroMapa, 19 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.img:getWidth(), mapa.img:getHeight())
+  quadrosSob[13] = newQuad(4 * tamanhoQuadroMapa, 20 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.img:getWidth(), mapa.img:getHeight())
+  
+  quadrosSob[14] = newQuad(6 * tamanhoQuadroMapa, 20 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.img:getWidth(), mapa.img:getHeight())
+  quadrosSob[15] = newQuad(7 * tamanhoQuadroMapa, 20 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.img:getWidth(), mapa.img:getHeight())
+  quadrosSob[16] = newQuad(4 * tamanhoQuadroMapa, 21 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.img:getWidth(), mapa.img:getHeight())
+  
+  quadrosSob[17] = newQuad(6 * tamanhoQuadroMapa, 21 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.img:getWidth(), mapa.img:getHeight())
+  quadrosSob[18] = newQuad(7 * tamanhoQuadroMapa, 21 * tamanhoQuadroMapa, tamanhoQuadroMapa, tamanhoQuadroMapa, mapa.img:getWidth(), mapa.img:getHeight())
 
   proximaFase = 1
   mapa.correMapa()
@@ -268,7 +281,7 @@ function mapa.draw(gameState)
     for posicao, linha in ipairs(mapa.fases[2]) do
       for coluna, quadro in ipairs(linha) do
         if quadro ~= 0 then
-          if quadro >= 29 then
+          if quadro >= 29 and quadro < 35 then
             love.graphics.draw(mapa.water, quadrosDetailColision[quadro], (coluna - 1) * tamanhoQuadroMapa, (posicao - 1) * tamanhoQuadroMapa)
           else
             love.graphics.draw(mapa.img, quadrosDetailColision[quadro], (coluna - 1) * tamanhoQuadroMapa, (posicao - 1) * tamanhoQuadroMapa)
@@ -310,7 +323,7 @@ function mapa.draw(gameState)
 end
 
 function mapa.update(dt)
-  faseBoss.angle = faseBoss.angle + dt * math.pi / 2
+  faseBoss.angle = faseBoss.angle - dt * math.pi / 2
 	faseBoss.angle = faseBoss.angle % (2*math.pi)
 
   if mapaTimer > 0.6 then
